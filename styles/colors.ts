@@ -3,5 +3,6 @@ export const colors = {
     primaryLight: "#262425",
     cyan: "#98E2F5",
     accent: "#FED766",
-    secondary: "#A0A0A0"
+    textPrimary: "#FAFAFA",
+    textSecondary: "#A0A0A0"
 }
