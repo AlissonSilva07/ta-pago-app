@@ -10,14 +10,16 @@ const dimensions = Dimensions.get('screen')
 export default function Welcome() {
   return (
     <SafeAreaView style={styles.container}>
-      <Image source={require('@/assets/images/welcome-image.png')} style={styles.topImg} />
+      <View style={styles.topImgView}>
+        <Image source={require('@/assets/images/happy-young-asian-lady-chatting-by-phone-looking-copyspace.jpg')} style={styles.topImg} />
+      </View>
       <View style={styles.bottomView}>
         <Image source={require('@/assets/images/app-icon-reduced.png')} style={styles.iconImg} />
         <ThemedText type='title'>Reúna suas contas em um lugar só.</ThemedText>
         <ThemedText type='defaultSecondary'>Depois, é só compartilhar com a galera.</ThemedText>
         <View style={styles.buttonView}>
-          <CustomButton title='Login' onPress={() => {}} variant='default' />
-          <CustomButton title='Cadastro' onPress={() => {}} variant='secondary' />
+          <CustomButton title='Login' onPress={() => { }} variant='default' />
+          <CustomButton title='Cadastro' onPress={() => { }} variant='secondary' />
         </View>
       </View>
     </SafeAreaView>
@@ -52,10 +54,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
   },
+  topImgView: {
+    flex: 1,
+    width: '100%'
+  },
   topImg: {
     height: '100%',
-    maxHeight: 595,
     width: dimensions.width,
-    resizeMode: 'contain'
+    resizeMode: 'cover',
   }
 })

@@ -31,7 +31,7 @@ export function ThemedText({
                 type === 'defaultSecondary' ? styles.defaultSecondary : undefined,
                 type === 'defaultMedium' ? styles.defaultMedium : undefined,
                 type === 'defaultDark' ? styles.defaultDark : undefined,
-                type === 'defaultDarkMedium' ? styles.defaultDark : undefined,
+                type === 'defaultDarkMedium' ? styles.defaultDarkMedium : undefined,
                 type === 'small' ? styles.small : undefined,
                 type === 'smallSecondary' ? styles.smallSecondary : undefined,
                 type === 'smallMedium' ? styles.smallMedium : undefined,

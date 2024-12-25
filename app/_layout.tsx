@@ -9,6 +9,7 @@ import {
   useFonts
 } from '@expo-google-fonts/space-grotesk'
 import { StatusBar } from 'react-native';
+import { colors } from '@/styles/colors';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +33,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <Stack initialRouteName='index'>
+      <Stack initialRouteName='index' screenOptions={{ navigationBarColor: colors.primary }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
