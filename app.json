@@ -38,10 +38,25 @@
           "backgroundColor": "#1C1C1C"
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O app terá acesso às suas fotos."
+        }
+      ],
       "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "42f14c7f-547d-44d4-aa17-11293a3f363e"
+      }
+    },
+    "owner": "tcctmm"
   }
 }

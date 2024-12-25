@@ -20,8 +20,8 @@ export default function Welcome() {
         <ThemedText type='title'>Reúna suas contas em um lugar só.</ThemedText>
         <ThemedText type='defaultSecondary'>Depois, é só compartilhar com a galera.</ThemedText>
         <View style={styles.buttonView}>
-          <CustomButton title='Login' onPress={() => router.navigate('/(tabs)')} variant='default' />
-          <CustomButton title='Cadastro' onPress={() => { }} variant='secondary' />
+          <CustomButton title='Login' onPress={() => router.navigate('/login')} variant='default' />
+          <CustomButton title='Cadastro' onPress={() => router.navigate('/cadastro')} variant='secondary' />
         </View>
       </View>
     </SafeAreaView>
