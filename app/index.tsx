@@ -4,10 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from '@/styles/colors'
 import { CustomButton } from '@/components/button'
 import { ThemedText } from '@/components/themedText'
+import { useRouter } from 'expo-router'
 
 const dimensions = Dimensions.get('screen')
 
 export default function Welcome() {
+  const router = useRouter()
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topImgView}>
@@ -18,7 +20,7 @@ export default function Welcome() {
         <ThemedText type='title'>Reúna suas contas em um lugar só.</ThemedText>
         <ThemedText type='defaultSecondary'>Depois, é só compartilhar com a galera.</ThemedText>
         <View style={styles.buttonView}>
-          <CustomButton title='Login' onPress={() => { }} variant='default' />
+          <CustomButton title='Login' onPress={() => router.navigate('/(tabs)')} variant='default' />
           <CustomButton title='Cadastro' onPress={() => { }} variant='secondary' />
         </View>
       </View>
