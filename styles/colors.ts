@@ -4,5 +4,6 @@ export const colors = {
     cyan: "#98E2F5",
     accent: "#FED766",
     textPrimary: "#FAFAFA",
-    textSecondary: "#A0A0A0"
+    textSecondary: "#A0A0A0",
+    bgGrayAlfa: "rgba(222, 226, 230, 0.3)",
 }

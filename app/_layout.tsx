@@ -1,4 +1,4 @@
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -15,6 +15,7 @@ import { colors } from '@/styles/colors';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const pathName = usePathname()
   const [loaded] = useFonts({
     SpaceGrotesk_400Regular,
     SpaceGrotesk_500Medium,
@@ -24,7 +25,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync()
-    }
+    }    
   }, [loaded])
 
   if (!loaded) {
@@ -33,7 +34,10 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <Stack initialRouteName='index' screenOptions={{ navigationBarColor: colors.primary }}>
+      <Stack initialRouteName='index'
+        screenOptions={{
+          navigationBarColor: colors.primary,
+        }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>

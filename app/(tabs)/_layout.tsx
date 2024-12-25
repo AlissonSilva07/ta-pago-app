@@ -17,7 +17,7 @@ export default function TabLayout() {
           elevation: 0,
           shadowOpacity: 0,
           borderTopWidth: 0,
-        },
+        }
       }}>
       <Tabs.Screen
         name="index"
@@ -26,7 +26,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => <LayoutDashboard size={size} color={color} />,
           tabBarShowLabel: false,
           tabBarActiveTintColor: colors.cyan,
-          tabBarInactiveTintColor: colors.textPrimary,
+          tabBarInactiveTintColor: colors.textPrimary
         }}
       />
       <Tabs.Screen
@@ -59,7 +59,7 @@ export default function TabLayout() {
   );
 }
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   iconBg: {
     height: 52,
     width: 52,
