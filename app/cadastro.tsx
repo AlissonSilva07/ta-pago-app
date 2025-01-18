@@ -44,9 +44,7 @@ const CadastroScreen = () => {
         });
 
         if (!result.canceled) {
-            setProfilePicture(result.assets[0].uri);
-            console.log(result.assets[0].uri);
-            
+            setProfilePicture(result.assets[0].uri);           
         }
     };
 

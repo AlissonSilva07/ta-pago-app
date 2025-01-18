@@ -1,5 +1,6 @@
 import CardAcessoRapido from '@/components/cardAcessoRapido';
 import { ThemedText } from '@/components/themedText';
+import { useUserContext } from '@/contexts/user-context';
 import { colors } from '@/styles/colors';
 import { MainShadowStyle } from '@/styles/mainShadow';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
@@ -7,13 +8,15 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+  const { userState } = useUserContext()
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerTopView}>
           <View style={styles.headerTopText}>
             <ThemedText type='smallSecondaryDark'>Olá,</ThemedText>
-            <ThemedText type='titleMediumDark'>Isabel Cristina</ThemedText>
+            <ThemedText type='titleMediumDark'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
           </View>
           <View style={styles.headerTopImg}>
             <UserRound size={24} color={colors.accent} />
