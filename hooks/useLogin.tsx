@@ -1,6 +1,6 @@
 import { FIREBASE_AUTH, FIREBASE_DB } from "@/firebaseConfig"
 import { useRouter } from "expo-router"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import { useState } from "react"
 import { ref, set, get } from 'firebase/database';
 import { Alert } from "react-native";
@@ -23,7 +23,6 @@ function useLogin() {
             setLoading(false)
             router.navigate("/(auth)")
         } catch (error: unknown) {
-            console.error('Login failed:', error)
             setLoading(false)
             Alert.alert('Erro', 'Email ou senha inválidos.')
         }
@@ -65,7 +64,7 @@ function useLogin() {
         }
     }
 
-    const getUserData = async () => {
+    async function getUserData() {
         const user = auth.currentUser;
 
         if (user) {
@@ -95,10 +94,23 @@ function useLogin() {
         }
     };
 
+    async function logOut() {
+        setLoading(true)
+        try {
+            await signOut(auth)
+            setLoading(false)
+            router.navigate("/login")
+        } catch (error: unknown) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
+
     return {
         loading,
         logIn,
-        signUp
+        signUp,
+        logOut
     }
 }
 

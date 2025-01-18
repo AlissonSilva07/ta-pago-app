@@ -4,7 +4,7 @@ import { useUserContext } from '@/contexts/user-context';
 import { colors } from '@/styles/colors';
 import { MainShadowStyle } from '@/styles/mainShadow';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
@@ -19,7 +19,16 @@ export default function HomeScreen() {
             <ThemedText type='titleMediumDark'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
           </View>
           <View style={styles.headerTopImg}>
-            <UserRound size={24} color={colors.accent} />
+            {userState?.value.user?.profilePicture ? (
+              <Image
+                source={{
+                  uri: `data:image/jpeg;base64,${userState?.value.user?.profilePicture}`, // Displaying the Base64 image
+                }}
+                style={styles.userImg} 
+              />
+            ) : (
+              <UserRound size={24} color={colors.accent} />
+            )}
           </View>
         </View>
         <View style={styles.headerBottomView}>
@@ -96,5 +105,11 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingHorizontal: 16,
     paddingVertical: 16
+  },
+  userImg: {
+    width: 40,
+    height: 40,
+    resizeMode: 'cover',
+    borderRadius: 100
   }
 });

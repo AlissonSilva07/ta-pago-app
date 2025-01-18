@@ -29,6 +29,7 @@ export function CustomButton({ title, onPress, icon, variant, ...rest }: ICustom
 const styles = StyleSheet.create({
     buttonDefault: {
         flex: 1,
+        maxHeight: 56,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: 'center',
@@ -39,6 +40,7 @@ const styles = StyleSheet.create({
     },
     buttonSecondary: {
         flex: 1,
+        maxHeight: 56,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: 'center',
@@ -49,6 +51,7 @@ const styles = StyleSheet.create({
     },
     buttonDisabled: {
         flex: 1,
+        maxHeight: 56,
         flexDirection: "row",
         alignItems: 'center',
         justifyContent: 'center',
