@@ -4,6 +4,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { useState } from "react"
 import { ref, set } from 'firebase/database';
 import { Alert } from "react-native";
+import * as FileSystem from 'expo-file-system';
+
 
 function useLogin() {
     const router = useRouter()
@@ -25,15 +27,17 @@ function useLogin() {
 
     async function signUp(email: string, password: string, username: string, profileImageUri: string) {
         setLoading(true)
+        console.log(profileImageUri);
+        
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const userC = userCredential.user;
 
             let base64Image = null;
             if (profileImageUri) {
-                const response = await fetch(profileImageUri);
-                const blob = await response.blob();
-                base64Image = await blobToBase64(blob);
+                base64Image = await FileSystem.readAsStringAsync(profileImageUri, {
+                    encoding: FileSystem.EncodingType.Base64,
+                  });
             }
 
             const userRef = ref(FIREBASE_DB, `users/${userC.uid}`);
