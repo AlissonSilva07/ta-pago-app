@@ -7,12 +7,14 @@ import { EyeOffIcon, Eye } from "lucide-react-native"
 import { useState } from "react"
 import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import auth from "@react-native-firebase/auth"
 
 export default function LoginScreen() {
     const router = useRouter()
     const [user, setUser] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const onChangeUser = (text: string) => {
         setUser(text)
@@ -24,6 +26,22 @@ export default function LoginScreen() {
 
     const togglePasswordVisible = () => {
         setPasswordVisible(!isPasswordVisible)
+    }
+
+    const handleLogin = async () => {
+        setLoading(true)
+        try {
+            if (!user || !password) {
+                alert('Preencha todos os campos.')
+                setLoading(false)
+                return
+            }
+            await auth().signInWithEmailAndPassword(user, password)
+            setLoading(false)
+        } catch (error: unknown) {
+            alert('Erro ao realizar login. Tente novamente.')
+            setLoading(false)
+        }
     }
 
     return (
@@ -50,7 +68,7 @@ export default function LoginScreen() {
             </View>
             <View style={styles.buttonArea}>
                 <View style={styles.buttonView}>
-                    <CustomButton title='Entrar' onPress={() => console.log('Entrar')} variant='default' />
+                    <CustomButton title='Entrar' onPress={handleLogin} variant='default' />
                 </View>
                 <TouchableOpacity onPress={() => router.navigate('/cadastro')}>
                     <ThemedText type='small' style={styles.txtLink}>Não possui login? Cadastre-se.</ThemedText>
