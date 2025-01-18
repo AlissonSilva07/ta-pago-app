@@ -6,14 +6,15 @@ interface ICustomButtonProps extends ButtonProps {
     title: string
     onPress: () => void
     icon?: JSX.Element | null
-    variant: 'default' | 'secondary'
+    variant: 'default' | 'secondary' | 'disabled'
 }
 
 export function CustomButton({ title, onPress, icon, variant, ...rest }: ICustomButtonProps) {
     return (
         <TouchableOpacity style={
             variant === 'default' ? styles.buttonDefault :
-                variant === 'secondary' ? styles.buttonSecondary : null
+                variant === 'secondary' ? styles.buttonSecondary :
+                    variant === 'disabled' ? styles.buttonDisabled : null
         } {...rest} onPress={onPress}>
             <ThemedText type={
                 variant === 'default'
@@ -44,6 +45,16 @@ const styles = StyleSheet.create({
         gap: 12,
         padding: 16,
         backgroundColor: colors.primaryLight,
+        borderRadius: 16,
+    },
+    buttonDisabled: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 12,
+        padding: 16,
+        backgroundColor: colors.textSecondary,
         borderRadius: 16,
     },
 });

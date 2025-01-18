@@ -1,64 +1,52 @@
-import { SplashScreen, Stack, usePathname, useRouter, useSegments } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { SplashScreen, Stack, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { colors } from '@/styles/colors';
+import { fonts } from '@/styles/fonts';
 import {
   SpaceGrotesk_400Regular,
   SpaceGrotesk_500Medium,
   SpaceGrotesk_600SemiBold,
   useFonts
-} from '@expo-google-fonts/space-grotesk'
-import { ActivityIndicator, StatusBar, TouchableOpacity } from 'react-native';
-import { colors } from '@/styles/colors';
-import { fonts } from '@/styles/fonts';
+} from '@expo-google-fonts/space-grotesk';
+import { StatusBar, TouchableOpacity } from 'react-native';
 
-import { Image, View } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import auth from "@react-native-firebase/auth"
+import { onAuthStateChanged } from 'firebase/auth';
+import { FIREBASE_AUTH } from '@/firebaseConfig';
+import { useAuthContext } from '@/contexts/auth-context';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const router = useRouter()
   const [loaded] = useFonts({
     SpaceGrotesk_400Regular,
     SpaceGrotesk_500Medium,
     SpaceGrotesk_600SemiBold
   })
 
-  const [initializing, setInitializing] = useState<boolean>(true)
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
-  const router = useRouter()
-  const segments = useSegments()
+  const { authState } = useAuthContext()
 
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync()
     }
   }, [loaded])
-
+  
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged)
-    return subscriber
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      console.log('user: ', user);
+      if (user) {
+        authState?.setValue({
+          token: user.getIdToken.toString(),
+          authenticated: true
+        })
+      }
+    })
   }, [])
-
-  const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
-    setUser(user)
-    if (initializing) setInitializing(false)
-  }
-
-  useEffect(() => {
-    if (initializing) return
-
-    const inAuthGroup = segments[0] === '(auth)'
-
-    if (user && !inAuthGroup) {
-      router.replace('/(auth)')
-    } else if (!user && inAuthGroup) {
-      router.replace('/')
-    }
-  }, [initializing, user])
 
   if (!loaded) {
     return null
@@ -66,7 +54,9 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <Stack initialRouteName='index'
+      <Stack initialRouteName={
+        authState?.value.token ? "(auth)/index" : "login"
+      }
         screenOptions={{
           navigationBarColor: colors.primary,
         }}>

@@ -1,23 +1,24 @@
 import { CustomButton } from "@/components/button"
 import { Input } from "@/components/input"
 import { ThemedText } from "@/components/themedText"
+import { useLogin } from "@/hooks/useLogin"
 import { colors } from "@/styles/colors"
 import { useRouter } from "expo-router"
-import { EyeOffIcon, Eye } from "lucide-react-native"
+import { Eye, EyeOffIcon } from "lucide-react-native"
 import { useState } from "react"
-import { View, StyleSheet, TouchableOpacity } from "react-native"
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import auth from "@react-native-firebase/auth"
 
 export default function LoginScreen() {
     const router = useRouter()
-    const [user, setUser] = useState<string>('')
+    const { loading, logIn } = useLogin()
+
+    const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false)
-    const [loading, setLoading] = useState<boolean>(false)
 
-    const onChangeUser = (text: string) => {
-        setUser(text)
+    const onChangeEmail = (text: string) => {
+        setEmail(text)
     }
 
     const onChangePassword = (text: string) => {
@@ -28,22 +29,6 @@ export default function LoginScreen() {
         setPasswordVisible(!isPasswordVisible)
     }
 
-    const handleLogin = async () => {
-        setLoading(true)
-        try {
-            if (!user || !password) {
-                alert('Preencha todos os campos.')
-                setLoading(false)
-                return
-            }
-            await auth().signInWithEmailAndPassword(user, password)
-            setLoading(false)
-        } catch (error: unknown) {
-            alert('Erro ao realizar login. Tente novamente.')
-            setLoading(false)
-        }
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.topContent}>
@@ -52,7 +37,7 @@ export default function LoginScreen() {
                     <ThemedText type='default'>Entre com as suas credenciais de acesso:</ThemedText>
                 </View>
                 <View style={styles.inputView}>
-                    <Input placeholder='E-mail' value={user} onChangeText={onChangeUser} />
+                    <Input placeholder='E-mail' value={email} onChangeText={setEmail} />
                     <View style={styles.passwordView}>
                         <Input placeholder='Senha' value={password} onChangeText={onChangePassword} secureTextEntry={!isPasswordVisible} />
                         {isPasswordVisible ?
@@ -68,7 +53,13 @@ export default function LoginScreen() {
             </View>
             <View style={styles.buttonArea}>
                 <View style={styles.buttonView}>
-                    <CustomButton title='Entrar' onPress={handleLogin} variant='default' />
+                    <CustomButton 
+                        title='Entrar' 
+                        onPress={() => logIn(email, password)} 
+                        variant={loading ? 'disabled' : 'default'}
+                        disabled={loading}
+                        icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
+                    />
                 </View>
                 <TouchableOpacity onPress={() => router.navigate('/cadastro')}>
                     <ThemedText type='small' style={styles.txtLink}>Não possui login? Cadastre-se.</ThemedText>
