@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { colors } from '@/styles/colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, Eye, EyeOffIcon } from 'lucide-react-native';
@@ -7,17 +7,20 @@ import { useRouter } from 'expo-router';
 import { CustomButton } from '@/components/button';
 import { Input } from '@/components/input';
 import { ThemedText } from '@/components/themedText';
+import { useLogin } from '@/hooks/useLogin';
 
 const CadastroScreen = () => {
     const router = useRouter()
-    const [name, setName] = useState('');
+    const { loading, signUp } = useLogin()
+
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [profilePicture, setProfilePicture] = useState<string | null>(null);
     const [isPasswordVisible, setPasswordVisible] = useState(false);
 
     const onChangeName = (text: string) => {
-        setName(text);
+        setUsername(text);
     };
 
     const onChangeEmail = (text: string) => {
@@ -45,9 +48,18 @@ const CadastroScreen = () => {
         }
     };
 
-    const handleSignUp = () => {
-        console.log('Sign Up', { name, email, password, profilePicture });
-    };
+    const handleSignup = async () => {
+        if (username && email && password && profilePicture) {
+            await signUp(email, password, username, profilePicture)
+        } else {
+            Alert.alert('Erro', 'Preencha todos os dados', [
+                {
+                    text: 'Ok',
+                    style: 'cancel'
+                }
+            ])
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -72,7 +84,7 @@ const CadastroScreen = () => {
                             </View>
                         )}
                     </TouchableOpacity>
-                    <Input placeholder='Nome' value={name} onChangeText={onChangeName} />
+                    <Input placeholder='Nome' value={username} onChangeText={onChangeName} />
                     <Input placeholder='E-mail' value={email} onChangeText={onChangeEmail} />
                     <View style={styles.passwordView}>
                         <Input placeholder='Senha' value={password} onChangeText={onChangePassword} secureTextEntry={!isPasswordVisible} />
@@ -91,7 +103,13 @@ const CadastroScreen = () => {
             </View>
             <View style={styles.buttonArea}>
                 <View style={styles.buttonView}>
-                    <CustomButton title='Cadastrar' onPress={handleSignUp} variant='default' />
+                    <CustomButton
+                        title='Cadastrar'
+                        onPress={handleSignup}
+                        variant={loading ? 'disabled' : 'default'}
+                        disabled={loading}
+                        icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null} 
+                    />
                 </View>
                 <TouchableOpacity onPress={() => router.navigate('/login')}>
                     <ThemedText type='small' style={styles.txtLink}>Já tem uma conta? Faça Login.</ThemedText>
