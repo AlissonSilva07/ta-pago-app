@@ -29,6 +29,23 @@ export default function PayLayout() {
                 ),
                 headerShadowVisible: false,
             }} />
+            <Stack.Screen name="create" options={{
+                title: 'Gastos',
+                headerTitleAlign: 'center',
+                headerTitleStyle: {
+                    fontFamily: fonts.regular,
+                    color: colors.textPrimary
+                },
+                headerStyle: {
+                    backgroundColor: colors.primary
+                },
+                headerLeft: () => (
+                    <TouchableOpacity onPress={() => router.navigate("/(auth)")}>
+                        <ChevronLeft size={24} color={colors.textPrimary} />
+                    </TouchableOpacity>
+                ),
+                headerShadowVisible: false,
+            }} />
         </Stack>
     );
 }

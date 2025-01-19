@@ -1,3 +1,4 @@
+import CardExpense from '@/components/cardExpense';
 import ChipComponent from '@/components/chip';
 import { ThemedText } from '@/components/themedText';
 import { chipTypes } from '@/mocks/chipTypes';
@@ -50,6 +51,27 @@ export default function PayScreen() {
                     keyExtractor={item => item.key.toString()}
                     contentContainerStyle={styles.flatlist}
                 />
+                <CardExpense 
+                    nome='Conta Agosto'
+                    status='Não Pago'
+                    valor={900}
+                    vencimento='12/04/2025'
+                    onPress={() => {}} 
+                />
+                <CardExpense 
+                    nome='Conta Maio'
+                    status='Não Pago'
+                    valor={700}
+                    vencimento='12/04/2025'
+                    onPress={() => {}} 
+                />
+                <CardExpense 
+                    nome='Fatura'
+                    status='Pago'
+                    valor={80}
+                    vencimento='12/04/2025'
+                    onPress={() => {}} 
+                />
             </View>
         </SafeAreaView>
     );
@@ -91,6 +113,7 @@ const styles = StyleSheet.create({
         borderColor: colors.accent,
     },
     input: {
+        flex: 1,
         fontFamily: fonts.regular,
         fontSize: RFValue(16),
         color: colors.textPrimary,

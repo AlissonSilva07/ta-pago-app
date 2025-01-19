@@ -3,11 +3,13 @@ import { ThemedText } from '@/components/themedText';
 import { useUserContext } from '@/contexts/user-context';
 import { colors } from '@/styles/colors';
 import { MainShadowStyle } from '@/styles/mainShadow';
+import { useRouter } from 'expo-router';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
 import { StyleSheet, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+  const router = useRouter()
   const { userState } = useUserContext()
 
   return (
@@ -34,11 +36,11 @@ export default function HomeScreen() {
         <View style={styles.headerBottomView}>
           <ThemedText type='small'>Acesso Rápido</ThemedText>
           <View style={styles.headerBottomCardView}>
-            <CardAcessoRapido>
+            <CardAcessoRapido onPress={() => router.navigate("/(auth)/pay")}>
               <DollarSign color={colors.primary} size={24} />
               <ThemedText type='defaultDarkMedium'>Pagar</ThemedText>
             </CardAcessoRapido>
-            <CardAcessoRapido>
+            <CardAcessoRapido onPress={() => router.navigate("/(auth)/pay/create")}>
               <CopyPlus color={colors.primary} size={24} />
               <ThemedText type='defaultDarkMedium'>Adicionar</ThemedText>
             </CardAcessoRapido>
