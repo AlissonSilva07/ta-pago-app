@@ -9,5 +9,6 @@ export const colors = {
     destructive: "#742425",
     evenLighterGray: "rgba(38, 36, 37, 0.4)",
     bgModal: "rgba(0, 0, 0, 0.3)",
-    black: "#000000"
+    black: "#000000",
+    orange: "#F06E1D"
 }

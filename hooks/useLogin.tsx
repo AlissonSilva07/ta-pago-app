@@ -6,6 +6,9 @@ import { ref, set, get } from 'firebase/database';
 import { Alert } from "react-native";
 import * as FileSystem from 'expo-file-system';
 import { useUserContext } from "@/contexts/user-context";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createLoginSchema, LoginSchema } from "@/schemas/login.schema";
 
 function useLogin() {
     const router = useRouter()
@@ -14,10 +17,20 @@ function useLogin() {
     const auth = FIREBASE_AUTH
     const database = FIREBASE_DB
 
-    async function logIn(email: string, password: string) {
+    const loginForm = useForm<LoginSchema>({
+        resolver: zodResolver(createLoginSchema),
+        defaultValues: {
+            email: '',
+            password: ''
+        },
+    });
+
+    async function logIn(data: LoginSchema) {
         setLoading(true)
+        console.log(data);
+        
         try {
-            await signInWithEmailAndPassword(auth, email, password)
+            await signInWithEmailAndPassword(auth, data.email, data.password)
             await getUserData()
             
             setLoading(false)
@@ -109,6 +122,7 @@ function useLogin() {
     }
 
     return {
+        loginForm,
         loading,
         logIn,
         signUp,

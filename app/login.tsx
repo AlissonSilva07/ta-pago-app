@@ -6,24 +6,15 @@ import { colors } from "@/styles/colors"
 import { useRouter } from "expo-router"
 import { Eye, EyeOffIcon } from "lucide-react-native"
 import { useState } from "react"
+import { Controller } from "react-hook-form"
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function LoginScreen() {
     const router = useRouter()
-    const { loading, logIn } = useLogin()
+    const { loading, loginForm, logIn } = useLogin()
 
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
     const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false)
-
-    const onChangeEmail = (text: string) => {
-        setEmail(text)
-    }
-
-    const onChangePassword = (text: string) => {
-        setPassword(text)
-    }
 
     const togglePasswordVisible = () => {
         setPasswordVisible(!isPasswordVisible)
@@ -37,25 +28,47 @@ export default function LoginScreen() {
                     <ThemedText type='default'>Entre com as suas credenciais de acesso:</ThemedText>
                 </View>
                 <View style={styles.inputView}>
-                    <Input placeholder='E-mail' value={email} onChangeText={onChangeEmail} />
-                    <View style={styles.passwordView}>
-                        <Input placeholder='Senha' value={password} onChangeText={onChangePassword} secureTextEntry={!isPasswordVisible} />
-                        {isPasswordVisible ?
-                            <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
-                                <EyeOffIcon color={colors.textSecondary} size={24} />
-                            </TouchableOpacity> :
-                            <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
-                                <Eye color={colors.textSecondary} size={24} />
-                            </TouchableOpacity>
-                        }
+                    <View style={styles.inputFieldTop}>
+                        <ThemedText type="smallMedium">Usuário:</ThemedText>
+                        <ThemedText type="smallSecondary">{loginForm.formState.errors.email?.message!}</ThemedText>
+                    </View>
+                    <Controller
+                        name="email"
+                        control={loginForm.control}
+                        render={({ field: { value, onChange } }) => (
+                            <Input placeholder='E-mail' value={value} onChangeText={onChange} />
+                        )}
+                    />
+                    <View style={styles.inputView}>
+                        <View style={styles.inputFieldTop}>
+                            <ThemedText type="smallMedium">Senha:</ThemedText>
+                            <ThemedText type="smallSecondary">{loginForm.formState.errors.password?.message!}</ThemedText>
+                        </View>
+                        <View style={styles.passwordView}>
+                            <Controller
+                                name="password"
+                                control={loginForm.control}
+                                render={({ field: { value, onChange } }) => (
+                                    <Input placeholder='Senha' value={value} onChangeText={onChange} secureTextEntry={!isPasswordVisible} />
+                                )}
+                            />
+                            {isPasswordVisible ?
+                                <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
+                                    <EyeOffIcon color={colors.textSecondary} size={24} />
+                                </TouchableOpacity> :
+                                <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
+                                    <Eye color={colors.textSecondary} size={24} />
+                                </TouchableOpacity>
+                            }
+                        </View>
                     </View>
                 </View>
             </View>
             <View style={styles.buttonArea}>
                 <View style={styles.buttonView}>
-                    <CustomButton 
-                        title='Entrar' 
-                        onPress={() => logIn(email, password)} 
+                    <CustomButton
+                        title='Entrar'
+                        onPress={loginForm.handleSubmit(logIn)}
                         variant={loading ? 'disabled' : 'default'}
                         disabled={loading}
                         icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
@@ -117,5 +130,11 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'column',
         height: 56,
+    },
+    inputFieldTop: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
     }
 })
