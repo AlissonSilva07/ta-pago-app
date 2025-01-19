@@ -6,4 +6,5 @@ export const colors = {
     textPrimary: "#FAFAFA",
     textSecondary: "#A0A0A0",
     bgGrayAlfa: "rgba(222, 226, 230, 0.3)",
+    destructive: "#742425"
 }

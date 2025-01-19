@@ -15,8 +15,8 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.headerTopView}>
           <View style={styles.headerTopText}>
-            <ThemedText type='smallSecondaryDark'>Olá,</ThemedText>
-            <ThemedText type='titleMediumDark'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
+            <ThemedText type='smallSecondary'>Olá,</ThemedText>
+            <ThemedText type='titleMedium'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
           </View>
           <View style={styles.headerTopImg}>
             {userState?.value.user?.profilePicture ? (
@@ -32,15 +32,15 @@ export default function HomeScreen() {
           </View>
         </View>
         <View style={styles.headerBottomView}>
-          <ThemedText type='defaultDarkMedium'>Acesso Rápido</ThemedText>
+          <ThemedText type='small'>Acesso Rápido</ThemedText>
           <View style={styles.headerBottomCardView}>
             <CardAcessoRapido>
-              <DollarSign color={colors.textPrimary} size={24} />
-              <ThemedText type='defaultMedium'>Pagar</ThemedText>
+              <DollarSign color={colors.primary} size={24} />
+              <ThemedText type='defaultDarkMedium'>Pagar</ThemedText>
             </CardAcessoRapido>
             <CardAcessoRapido>
-              <CopyPlus color={colors.textPrimary} size={24} />
-              <ThemedText type='defaultMedium'>Adicionar</ThemedText>
+              <CopyPlus color={colors.primary} size={24} />
+              <ThemedText type='defaultDarkMedium'>Adicionar</ThemedText>
             </CardAcessoRapido>
           </View>
         </View>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingVertical: 16,
     paddingHorizontal: 16,
-    backgroundColor: colors.accent
+    backgroundColor: colors.primary
   },
   headerTopView: {
     width: '100%',
@@ -78,7 +78,8 @@ const styles = StyleSheet.create({
   },
   headerTopText: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    gap: 6
   },
   headerTopImg: {
     width: 40,
