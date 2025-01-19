@@ -39,28 +39,28 @@ export default function LoginScreen() {
                             <Input placeholder='E-mail' value={value} onChangeText={onChange} />
                         )}
                     />
-                    <View style={styles.inputView}>
-                        <View style={styles.inputFieldTop}>
-                            <ThemedText type="smallMedium">Senha:</ThemedText>
-                            <ThemedText type="smallSecondary">{loginForm.formState.errors.password?.message!}</ThemedText>
-                        </View>
-                        <View style={styles.passwordView}>
-                            <Controller
-                                name="password"
-                                control={loginForm.control}
-                                render={({ field: { value, onChange } }) => (
-                                    <Input placeholder='Senha' value={value} onChangeText={onChange} secureTextEntry={!isPasswordVisible} />
-                                )}
-                            />
-                            {isPasswordVisible ?
-                                <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
-                                    <EyeOffIcon color={colors.textSecondary} size={24} />
-                                </TouchableOpacity> :
-                                <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
-                                    <Eye color={colors.textSecondary} size={24} />
-                                </TouchableOpacity>
-                            }
-                        </View>
+                </View>
+                <View style={styles.inputView}>
+                    <View style={styles.inputFieldTop}>
+                        <ThemedText type="smallMedium">Senha:</ThemedText>
+                        <ThemedText type="smallSecondary">{loginForm.formState.errors.password?.message!}</ThemedText>
+                    </View>
+                    <View style={styles.passwordView}>
+                        <Controller
+                            name="password"
+                            control={loginForm.control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input placeholder='Senha' value={value} onChangeText={onChange} secureTextEntry={!isPasswordVisible} />
+                            )}
+                        />
+                        {isPasswordVisible ?
+                            <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
+                                <EyeOffIcon color={colors.textSecondary} size={24} />
+                            </TouchableOpacity> :
+                            <TouchableOpacity onPress={() => togglePasswordVisible()} style={{ position: 'absolute', right: 12 }}>
+                                <Eye color={colors.textSecondary} size={24} />
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
             </View>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     topContent: {
         width: '100%',
         flexDirection: 'column',
-        gap: 32
+        gap: 16
     },
     txtView: {
         width: '100%',

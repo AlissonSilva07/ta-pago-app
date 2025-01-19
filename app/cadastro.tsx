@@ -8,28 +8,14 @@ import { CustomButton } from '@/components/button';
 import { Input } from '@/components/input';
 import { ThemedText } from '@/components/themedText';
 import { useLogin } from '@/hooks/useLogin';
+import { Controller } from 'react-hook-form';
 
 const CadastroScreen = () => {
     const router = useRouter()
-    const { loading, signUp } = useLogin()
+    const { signUpForm, loading, signUp } = useLogin()
 
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [profilePicture, setProfilePicture] = useState<string | null>(null);
     const [isPasswordVisible, setPasswordVisible] = useState(false);
-
-    const onChangeName = (text: string) => {
-        setUsername(text);
-    };
-
-    const onChangeEmail = (text: string) => {
-        setEmail(text);
-    };
-
-    const onChangePassword = (text: string) => {
-        setPassword(text);
-    };
 
     const togglePasswordVisible = () => {
         setPasswordVisible(!isPasswordVisible);
@@ -44,22 +30,10 @@ const CadastroScreen = () => {
         });
 
         if (!result.canceled) {
-            setProfilePicture(result.assets[0].uri);           
+            setProfilePicture(result.assets[0].uri);
+            signUpForm.setValue("profilePicture", result.assets[0].uri);
         }
     };
-
-    const handleSignup = async () => {
-        if (username && email && password && profilePicture) {
-            await signUp(email, password, username, profilePicture)
-        } else {
-            Alert.alert('Erro', 'Preencha todos os dados', [
-                {
-                    text: 'Ok',
-                    style: 'cancel'
-                }
-            ])
-        }
-    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -84,31 +58,67 @@ const CadastroScreen = () => {
                             </View>
                         )}
                     </TouchableOpacity>
-                    <Input placeholder='Nome' value={username} onChangeText={onChangeName} />
-                    <Input placeholder='E-mail' value={email} onChangeText={onChangeEmail} />
-                    <View style={styles.passwordView}>
-                        <Input placeholder='Senha' value={password} onChangeText={onChangePassword} secureTextEntry={!isPasswordVisible} />
-                        {isPasswordVisible ? (
-                            <TouchableOpacity onPress={togglePasswordVisible} style={{ position: 'absolute', right: 12 }}>
-                                <EyeOffIcon color={colors.textSecondary} size={24} />
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity onPress={togglePasswordVisible} style={{ position: 'absolute', right: 12 }}>
-                                <Eye color={colors.textSecondary} size={24} />
-                            </TouchableOpacity>
-                        )}
+                    <View style={styles.inputView}>
+                        <View style={styles.inputFieldTop}>
+                            <ThemedText type="smallMedium">Nome:</ThemedText>
+                            <ThemedText type="smallSecondary">{signUpForm.formState.errors.username?.message!}</ThemedText>
+                        </View>
+                        <Controller
+                            name="username"
+                            control={signUpForm.control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input placeholder='Nome' value={value} onChangeText={onChange} />
+                            )}
+                        />
+                    </View>
+                    <View style={styles.inputView}>
+                        <View style={styles.inputFieldTop}>
+                            <ThemedText type="smallMedium">Email:</ThemedText>
+                            <ThemedText type="smallSecondary">{signUpForm.formState.errors.email?.message!}</ThemedText>
+                        </View>
+                        <Controller
+                            name="email"
+                            control={signUpForm.control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input placeholder='E-mail' value={value} onChangeText={onChange} />
+                            )}
+                        />
                     </View>
 
+                    <View style={styles.inputView}>
+                        <View style={styles.inputFieldTop}>
+                            <ThemedText type="smallMedium">Senha:</ThemedText>
+                            <ThemedText type="smallSecondary">{signUpForm.formState.errors.password?.message!}</ThemedText>
+                        </View>
+                        <Controller
+                            name="password"
+                            control={signUpForm.control}
+                            render={({ field: { value, onChange } }) => (
+                                <View style={styles.passwordView}>
+                                    <Input placeholder='Senha' value={value} onChangeText={onChange} secureTextEntry={!isPasswordVisible} />
+                                    {isPasswordVisible ? (
+                                        <TouchableOpacity onPress={togglePasswordVisible} style={{ position: 'absolute', right: 12 }}>
+                                            <EyeOffIcon color={colors.textSecondary} size={24} />
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity onPress={togglePasswordVisible} style={{ position: 'absolute', right: 12 }}>
+                                            <Eye color={colors.textSecondary} size={24} />
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                            )}
+                        />
+                    </View>
                 </View>
             </View>
             <View style={styles.buttonArea}>
                 <View style={styles.buttonView}>
                     <CustomButton
                         title='Cadastrar'
-                        onPress={handleSignup}
+                        onPress={signUpForm.handleSubmit(signUp)}
                         variant={loading ? 'disabled' : 'default'}
                         disabled={loading}
-                        icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null} 
+                        icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
                     />
                 </View>
                 <TouchableOpacity onPress={() => router.navigate('/login')}>
@@ -184,6 +194,12 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'column',
         height: 56,
+    },
+    inputFieldTop: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
     }
 });
 

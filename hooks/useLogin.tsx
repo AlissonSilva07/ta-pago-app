@@ -9,6 +9,7 @@ import { useUserContext } from "@/contexts/user-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createLoginSchema, LoginSchema } from "@/schemas/login.schema";
+import { createSignupSchema, SignupSchema } from "@/schemas/signUp.schema";
 
 function useLogin() {
     const router = useRouter()
@@ -25,10 +26,18 @@ function useLogin() {
         },
     });
 
+    const signUpForm = useForm<SignupSchema>({
+        resolver: zodResolver(createSignupSchema),
+        defaultValues: {
+            username: '',
+            email: '',
+            password: '',
+            profilePicture: ''
+        },
+    });
+
     async function logIn(data: LoginSchema) {
-        setLoading(true)
-        console.log(data);
-        
+        setLoading(true)        
         try {
             await signInWithEmailAndPassword(auth, data.email, data.password)
             await getUserData()
@@ -41,15 +50,15 @@ function useLogin() {
         }
     }
 
-    async function signUp(email: string, password: string, username: string, profileImageUri: string) {
+    async function signUp(data: SignupSchema) {
         setLoading(true)
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             const userC = userCredential.user;
 
             let base64Image = null;
-            if (profileImageUri) {
-                base64Image = await FileSystem.readAsStringAsync(profileImageUri, {
+            if (data.profilePicture) {
+                base64Image = await FileSystem.readAsStringAsync(data.profilePicture, {
                     encoding: FileSystem.EncodingType.Base64,
                 });
             }
@@ -57,7 +66,7 @@ function useLogin() {
             const userRef = ref(FIREBASE_DB, `users/${userC.uid}`);
             await set(userRef, {
                 email: userC.email,
-                username: username,
+                username: data.username,
                 profilePicture: base64Image,
             });
 
@@ -123,6 +132,7 @@ function useLogin() {
 
     return {
         loginForm,
+        signUpForm,
         loading,
         logIn,
         signUp,
