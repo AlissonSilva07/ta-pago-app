@@ -8,4 +8,6 @@ export const colors = {
     bgGrayAlfa: "rgba(222, 226, 230, 0.1)",
     destructive: "#742425",
     evenLighterGray: "rgba(38, 36, 37, 0.4)",
+    bgModal: "rgba(0, 0, 0, 0.3)",
+    black: "#000000"
 }
