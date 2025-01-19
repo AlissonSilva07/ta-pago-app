@@ -10,12 +10,12 @@ interface CardAcessoRapidoProps {
 
 export default function CardAcessoRapido({ children, onPress }: CardAcessoRapidoProps) {
   return (
-    <Pressable style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       <View style={styles.upIcon}>
         <ArrowUpRight size={16} color={colors.accent} />
       </View>
       {children}
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 

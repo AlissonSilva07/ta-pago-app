@@ -12,13 +12,14 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.primary,
           elevation: 0,
           shadowOpacity: 0,
           borderTopWidth: 0,
-        }
+        },
       }}>
       <Tabs.Screen
         name="index"

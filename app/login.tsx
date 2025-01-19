@@ -37,7 +37,7 @@ export default function LoginScreen() {
                     <ThemedText type='default'>Entre com as suas credenciais de acesso:</ThemedText>
                 </View>
                 <View style={styles.inputView}>
-                    <Input placeholder='E-mail' value={email} onChangeText={setEmail} />
+                    <Input placeholder='E-mail' value={email} onChangeText={onChangeEmail} />
                     <View style={styles.passwordView}>
                         <Input placeholder='Senha' value={password} onChangeText={onChangePassword} secureTextEntry={!isPasswordVisible} />
                         {isPasswordVisible ?

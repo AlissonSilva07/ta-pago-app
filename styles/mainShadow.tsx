@@ -75,9 +75,6 @@ const styles = StyleSheet.create({
     },
     customBox: {
         padding: 16,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        alignSelf: 'stretch',
         borderRadius: 16,
         backgroundColor: colors.primaryLight,
     },
