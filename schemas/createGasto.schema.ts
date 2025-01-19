@@ -4,13 +4,13 @@ const createGastoSchema = z.object({
     title: z.string().min(5, 'Obrigatório.'),
     amount: z.string().min(1, 'Obrigatório.'),
     category: z.string().min(5, 'Obrigatório.'),
-    dueDate: z.date(),
+    dueDate: z.date({ required_error: 'Obrigatório.' }),
     isPaid: z.boolean().optional(),
     recurring: z.object({
       type: z.string(),
       nextDueDate: z.date(),
     }).optional(),
-    description: z.string().min(5, 'Obrigatório.'),
+    description: z.string().optional(),
   });
 
 type GastoSchema = z.infer<typeof createGastoSchema>;

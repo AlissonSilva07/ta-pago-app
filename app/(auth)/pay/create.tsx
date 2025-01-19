@@ -142,7 +142,7 @@ export default function CreateScreen() {
                     />
                     <CustomButton
                         title='Limpar'
-                        onPress={() => { }}
+                        onPress={() => form.reset()}
                         variant={'secondary'}
                         disabled={false}
                     />
