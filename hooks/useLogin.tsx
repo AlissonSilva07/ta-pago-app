@@ -68,7 +68,8 @@ function useLogin() {
         const user = auth.currentUser;
 
         if (user) {
-            const uid = user.uid;            
+            const uid = user.uid;
+            const creationTime = user.metadata.creationTime;            
 
             const userRef = ref(database, 'users/' + uid);
             try {
@@ -80,8 +81,9 @@ function useLogin() {
                             username: userData.username,
                             email: userData.email,
                             profilePicture: userData.profilePicture,
+                            createdAt: creationTime
                         }
-                    });
+                    });                   
 
                     return userData;                    
                 } else {

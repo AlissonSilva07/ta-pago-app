@@ -6,6 +6,7 @@ import { colors } from '@/styles/colors';
 import { UserRound } from 'lucide-react-native';
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import dayjs from 'dayjs'
 
 export default function MenuScreen() {
   const { loading, logOut } = useLogin()
@@ -28,7 +29,7 @@ export default function MenuScreen() {
         </View>
         <View style={styles.headerTopText}>
           <ThemedText type='titleMedium'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
-          <ThemedText type='smallSecondary'>Ativo(a) desde: 12/04/2024</ThemedText>
+          <ThemedText type='smallSecondary'>Ativo(a) desde: {dayjs(userState?.value.user?.createdAt).format('DD/MM/YYYY')}</ThemedText>
         </View>
       </View>
       <View style={styles.buttonArea}>
