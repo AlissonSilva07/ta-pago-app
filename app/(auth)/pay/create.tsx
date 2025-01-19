@@ -5,7 +5,7 @@ import { categoryTypes } from "@/mocks/selectCategories"
 import { colors } from "@/styles/colors"
 import { ChevronsUpDown } from "lucide-react-native"
 import { useState } from "react"
-import { FlatList, Modal, Pressable, StyleSheet, TouchableOpacity, View } from "react-native"
+import { FlatList, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import DateTimePicker from '@react-native-community/datetimepicker';
 import dayjs from "dayjs"
@@ -51,32 +51,34 @@ export default function CreateScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <ThemedText type='titleSmall'>Novo Gasto</ThemedText>
-            <View style={styles.inputField}>
-                <ThemedText type="default">Nome:</ThemedText>
-                <Input placeholder='Nome do gasto' value={expenseName} onChangeText={onChangeEmail} />
-            </View>
-            <View style={styles.inputField}>
-                <ThemedText type="default">Valor:</ThemedText>
-                <Input placeholder='Valor do gasto' inputMode="decimal" keyboardType="decimal-pad" value={expenseAmount} onChangeText={onChangeAmount} />
-            </View>
-            <View style={styles.inputField}>
-                <ThemedText type="default">Categoria:</ThemedText>
-                <Pressable style={styles.selectArea} onPress={handleOpenModalExpenseCategory}>
-                    <Input placeholder='Selecione uma categoria' editable={false} value={expenseCategory} onChangeText={onChangeEmail} />
-                    <ChevronsUpDown color={colors.textSecondary} style={styles.selectIcon} />
-                </Pressable>
-            </View>
-            <View style={styles.inputField}>
-                <ThemedText type="default">Descrição:</ThemedText>
-                <Input placeholder='Descrição' value={expenseDescription} multiline={true} numberOfLines={3} onChangeText={onChangeDescription} />
-            </View>
-            <View style={styles.inputField}>
-                <ThemedText type="default">Data de Vencimento:</ThemedText>
-                <Pressable style={styles.selectArea} onPress={handleOpenModalExpenseDate}>
-                    <Input placeholder='Selecione uma data' editable={false} value={dayjs(selectedDate).format('DD/MM/YYYY') ?? ''} onChangeText={onChangeEmail} />
-                    <ChevronsUpDown color={colors.textSecondary} style={styles.selectIcon} />
-                </Pressable>
-            </View>
+            <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollArea}>
+                <View style={styles.inputField}>
+                    <ThemedText type="default">Nome:</ThemedText>
+                    <Input placeholder='Nome do gasto' value={expenseName} onChangeText={onChangeEmail} />
+                </View>
+                <View style={styles.inputField}>
+                    <ThemedText type="default">Valor:</ThemedText>
+                    <Input placeholder='Valor do gasto' inputMode="decimal" keyboardType="decimal-pad" value={expenseAmount} onChangeText={onChangeAmount} />
+                </View>
+                <View style={styles.inputField}>
+                    <ThemedText type="default">Categoria:</ThemedText>
+                    <Pressable style={styles.selectArea} onPress={handleOpenModalExpenseCategory}>
+                        <Input placeholder='Selecione uma categoria' editable={false} value={expenseCategory} onChangeText={onChangeEmail} />
+                        <ChevronsUpDown color={colors.textSecondary} style={styles.selectIcon} />
+                    </Pressable>
+                </View>
+                <View style={styles.inputField}>
+                    <ThemedText type="default">Descrição:</ThemedText>
+                    <Input placeholder='Descrição' value={expenseDescription} multiline={true} numberOfLines={3} onChangeText={onChangeDescription} />
+                </View>
+                <View style={styles.inputField}>
+                    <ThemedText type="default">Data de Vencimento:</ThemedText>
+                    <Pressable style={styles.selectArea} onPress={handleOpenModalExpenseDate}>
+                        <Input placeholder='Selecione uma data' editable={false} value={dayjs(selectedDate).format('DD/MM/YYYY') ?? 'Selecionar um data'} onChangeText={onChangeEmail} />
+                        <ChevronsUpDown color={colors.textSecondary} style={styles.selectIcon} />
+                    </Pressable>
+                </View>
+            </ScrollView>
             <ModalLayout
                 title="Categoria"
                 isVisible={isOpenExpenseCategoryModal}
@@ -112,6 +114,15 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         paddingHorizontal: 16,
         paddingVertical: 16
+    },
+    scroll: {
+        flex: 1,
+        width: '100%'
+    },
+    scrollArea: {
+        flexDirection: 'column',
+        gap: 16,
+        alignItems: 'center',
     },
     inputField: {
         width: '100%',
