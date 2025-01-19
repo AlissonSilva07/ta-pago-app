@@ -1,12 +1,13 @@
 import CardExpense from '@/components/cardExpense';
 import ChipComponent from '@/components/chip';
 import { ThemedText } from '@/components/themedText';
+import { useGastos } from '@/hooks/useGastos';
 import { chipTypes } from '@/mocks/chipTypes';
 import { colors } from '@/styles/colors';
 import { fonts } from '@/styles/fonts';
 import { MainShadowStyle } from '@/styles/mainShadow';
 import { DollarSign, Search } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,7 +15,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function PayScreen() {
     const [query, setQuery] = useState<string>('')
     const [isFocused, setIsFocused] = useState<boolean>(false);
-    const [selectedChip, setSelectedChip] = useState<number | null>(0); // Track selected chip
+    const [selectedChip, setSelectedChip] = useState<number | null>(0);
+
+    const { loading, getGastos, expenses } = useGastos()
 
 
     const onChangeQuery = (text: string) => {
@@ -24,6 +27,10 @@ export default function PayScreen() {
     const handleChipPress = (chipKey: number) => {
         setSelectedChip(chipKey);
     };
+
+    useEffect(() => {
+        getGastos()
+    }, [])
 
 
     return (
@@ -49,28 +56,22 @@ export default function PayScreen() {
                     data={chipTypes}
                     renderItem={(item) => <ChipComponent title={item.item.title} checked={item.item.key === selectedChip} onPress={() => handleChipPress(item.item.key)} />}
                     keyExtractor={item => item.key.toString()}
-                    contentContainerStyle={styles.flatlist}
+                    contentContainerStyle={styles.flatlistChips}
                 />
-                <CardExpense 
-                    nome='Conta Agosto'
-                    status='Não Pago'
-                    valor={900}
-                    vencimento='12/04/2025'
-                    onPress={() => {}} 
-                />
-                <CardExpense 
-                    nome='Conta Maio'
-                    status='Não Pago'
-                    valor={700}
-                    vencimento='12/04/2025'
-                    onPress={() => {}} 
-                />
-                <CardExpense 
-                    nome='Fatura'
-                    status='Pago'
-                    valor={80}
-                    vencimento='12/04/2025'
-                    onPress={() => {}} 
+
+                <FlatList
+                    data={expenses}
+                    renderItem={(item) => (
+                        <CardExpense
+                            nome={item.item.title}
+                            status={item.item.isPaid ? 'Pago' : 'Não Pago'}
+                            valor={Number(item.item.amount)}
+                            vencimento={item.item.dueDate}
+                            onPress={() => { }}
+                        />
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                    contentContainerStyle={styles.flatlistExpenses}
                 />
             </View>
         </SafeAreaView>
@@ -123,9 +124,14 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         gap: 16,
     },
-    flatlist: {
+    flatlistChips: {
         flexDirection: 'row',
         gap: 8,
         alignItems: 'center'
+    },
+    flatlistExpenses: {
+        width: '100%',
+        flexDirection: 'column',
+        gap: 16,
     }
 });

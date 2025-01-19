@@ -38,7 +38,7 @@ export default function CreateScreen() {
     const handleDateChange = (event: any, date?: Date) => {
         if (date) {
             setSelectedDate(date);
-            form.setValue("dueDate", date)
+            form.setValue("dueDate", selectedDate)            
         }
         setModalDateVisible(false);
     };

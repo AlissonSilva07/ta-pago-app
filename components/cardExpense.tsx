@@ -5,12 +5,13 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native"
 import { ThemedText } from "./themedText"
 import { RFValue } from "react-native-responsive-fontsize"
 import { fonts } from "@/styles/fonts"
+import dayjs from "dayjs"
 
 interface CardExpenseProps {
-    nome: string
-    valor: number
-    vencimento: string
-    status: string
+    nome: string | null
+    valor: number | null
+    vencimento: Date | null
+    status: string | null
     onPress?: () => void
 }
 
@@ -22,9 +23,9 @@ export default function CardExpense({ nome, status, valor, vencimento, onPress }
                     <DollarSign color={colors.primary} />
                 </View>
                 <View style={styles.expenseInfo}>
-                    <ThemedText type='small'>{nome}</ThemedText>
+                    <ThemedText type='small'>{nome ?? ''}</ThemedText>
                     <ThemedText type='titleMedium'>R$ {valor}</ThemedText>
-                    <ThemedText type='smallSecondary'>Vencimento: {vencimento}</ThemedText>
+                    <ThemedText type='smallSecondary'>Vencimento: {dayjs(vencimento).format('DD/MM/YYYY') ?? ''}</ThemedText>
                     <ThemedText type='small'>Status: {status}</ThemedText>
                 </View>
                 <TouchableOpacity onPress={onPress}>
