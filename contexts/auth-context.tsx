@@ -1,33 +1,33 @@
-import { AuthStateInterface } from '@/interfaces/auth.interface';
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { FIREBASE_AUTH } from '@/firebaseConfig';
 
-type AuthContextProps = {
-	authState?: {
-		value: AuthStateInterface;
-		setValue: (value: AuthStateInterface) => void;
-	};
-	onLogout?: () => Promise<any>;
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+}
+
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+});
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ user, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
-
-const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
-
-const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-	const [authState, setAuthState] = useState<AuthStateInterface>({
-		token: null,
-        authenticated: false
-	});
-
-	const value: AuthContextProps = {
-		authState: {
-			value: authState,
-			setValue: setAuthState,
-		},
-	};
-
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-const useAuthContext = () => {
-	return useContext(AuthContext);
-};
-export { AuthContextProvider, useAuthContext };

@@ -1,5 +1,5 @@
 import { SplashScreen, Stack, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { colors } from '@/styles/colors';
@@ -12,24 +12,21 @@ import {
 } from '@expo-google-fonts/space-grotesk';
 import { StatusBar, TouchableOpacity } from 'react-native';
 
+import { AuthContext, AuthProvider } from '@/contexts/auth-context';
+import { UserContextProvider } from '@/contexts/user-context';
 import { ChevronLeft } from 'lucide-react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { FIREBASE_AUTH } from '@/firebaseConfig';
-import { AuthContextProvider, useAuthContext } from '@/contexts/auth-context';
-import { UserContextProvider, useUserContext } from '@/contexts/user-context';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const router = useRouter()
+  const { user } = useContext(AuthContext);
   const [loaded] = useFonts({
     SpaceGrotesk_400Regular,
     SpaceGrotesk_500Medium,
     SpaceGrotesk_600SemiBold
   })
-
-  const { authState } = useAuthContext()
 
   useEffect(() => {
     if (loaded) {
@@ -37,27 +34,16 @@ export default function RootLayout() {
     }
   }, [loaded])
 
-  useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      if (user) {
-        authState?.setValue({
-          token: user.getIdToken.toString(),
-          authenticated: true
-        })
-      }
-    })
-  }, [])
-
   if (!loaded) {
     return null
   }
 
   return (
     <SafeAreaProvider>
-      <AuthContextProvider>
+      <AuthProvider>
         <UserContextProvider>
           <Stack initialRouteName={
-            authState?.value.token ? "(auth)/index" : "login"
+            user ? "(auth)/index" : "login"
           }
             screenOptions={{
               navigationBarColor: colors.primary,
@@ -101,7 +87,7 @@ export default function RootLayout() {
           </Stack>
           <StatusBar barStyle='light-content' />
         </UserContextProvider>
-      </AuthContextProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
