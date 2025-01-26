@@ -5,11 +5,9 @@ import { useGastos } from '@/hooks/useGastos';
 import { chipTypes } from '@/mocks/chipTypes';
 import { colors } from '@/styles/colors';
 import { fonts } from '@/styles/fonts';
-import { MainShadowStyle } from '@/styles/mainShadow';
-import { useFocusEffect } from 'expo-router';
-import { DollarSign, Search } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
-import { FlatList, Keyboard, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Search } from 'lucide-react-native';
+import { useState } from 'react';
+import { FlatList, RefreshControl, StyleSheet, TextInput, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,11 +16,12 @@ export default function PayScreen() {
     const [isFocused, setIsFocused] = useState<boolean>(false);
     const [selectedChip, setSelectedChip] = useState<number | null>(0);
 
-    const { refreshing, expenses, onRefresh } = useGastos()
+    const { refreshing, expenses, onRefresh, getGastoByName, filteredExpenses } = useGastos()
 
 
     const onChangeQuery = (text: string) => {
         setQuery(text)
+        getGastoByName(text)
     }
 
     const handleChipPress = (chipKey: number) => {
@@ -56,7 +55,7 @@ export default function PayScreen() {
                 />
             </View>
             <FlatList
-                data={expenses}
+                data={query.length > 0 ? filteredExpenses : expenses}
                 renderItem={(item) => (
                     <CardExpense
                         nome={item.item.title}
@@ -72,10 +71,14 @@ export default function PayScreen() {
                 contentContainerStyle={styles.flatlistExpenses}
                 ListEmptyComponent={() => (
                     <View style={styles.emptyList}>
-                        <ThemedText type='smallSecondary'>Nenhum gasto encontrado.</ThemedText>
+                        {query.length > 0 ? (
+                            <ThemedText type='smallSecondary'>{`Nenhum gasto encontrado com "${query}".`}</ThemedText>
+                        ) : (
+                            <ThemedText type='smallSecondary'>Nenhum gasto encontrado.</ThemedText>
+                        )}
                     </View>
                 )}
-                ListFooterComponent={() => expenses.length > 0 && (
+                ListFooterComponent={() => expenses.length > 0 || expenses.length > 0 && (
                     <View style={styles.footerList}>
                         <ThemedText type='smallSecondary'>Puxe para atualizar.</ThemedText>
                     </View>

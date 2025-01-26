@@ -1,12 +1,13 @@
 import { createGastoSchema, GastoSchema } from '@/schemas/createGasto.schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FIREBASE_AUTH, FIREBASE_DB } from '@/firebaseConfig';
 import { ref, push, set, get } from "firebase/database";
 import { Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Expense } from '@/interfaces/expense.interface';
+import debounce from 'lodash.debounce';
 
 function useGastos() {
     const auth = FIREBASE_AUTH
@@ -16,6 +17,7 @@ function useGastos() {
     const [loading, setLoading] = useState<boolean>(false)
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [expenses, setExpenses] = useState<Expense[]>([])
+    const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
 
     const form = useForm<GastoSchema>({
         resolver: zodResolver(createGastoSchema),
@@ -45,6 +47,7 @@ function useGastos() {
                 }));
 
                 setExpenses(expensesWithIds)
+                setFilteredExpenses(expensesWithIds)
             }
         } catch (error) {
             setLoading(false)
@@ -78,14 +81,52 @@ function useGastos() {
         }
     }
 
+    const getGastoByName = useMemo(
+        () =>
+            debounce(async (name: string) => {
+                if (!name) {
+                    setFilteredExpenses(expenses);
+                    return;
+                }
+
+                setLoading(true);
+                try {
+                    const user = auth.currentUser;
+                    const expensesRef = ref(database, `users/${user?.uid}/expenses`);
+
+                    const snapshot = await get(expensesRef);
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+
+                        const filtered = Object.keys(data)
+                            .map((key) => ({
+                                id: key,
+                                ...data[key],
+                            }))
+                            .filter((expense) =>
+                                expense.title.toLowerCase().includes(name.toLowerCase())
+                            );
+
+                        setFilteredExpenses(filtered);
+                    }
+                } catch (error) {
+                    Alert.alert('Erro!', `Erro ao buscar registros: ${error}`);
+                } finally {
+                    setLoading(false);
+                }
+            }, 2000),
+        [expenses]
+    );
+
+
     const onRefresh = async () => {
-        setRefreshing(true); // Start refreshing
+        setRefreshing(true);
         try {
-            await getGastos(); // Wait for the data to be fetched
+            await getGastos();
         } catch (err) {
             console.error('Error during refresh:', err);
         } finally {
-            setRefreshing(false); // Stop refreshing regardless of success or failure
+            setRefreshing(false);
         }
     };
 
@@ -100,12 +141,14 @@ function useGastos() {
 
     return {
         expenses,
+        filteredExpenses,
         refreshing,
         loading,
         form,
         createGasto,
         getGastos,
-        onRefresh
+        onRefresh,
+        getGastoByName
     }
 }
 
