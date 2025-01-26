@@ -70,8 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   headerTopImg: {
-    width: 80,
-    height: 80,
+    width: '100%',
     backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
@@ -79,8 +78,8 @@ const styles = StyleSheet.create({
     borderRadius: 100
   },
   userImg: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
     resizeMode: 'cover',
     borderRadius: 100
   },

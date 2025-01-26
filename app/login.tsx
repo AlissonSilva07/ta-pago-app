@@ -36,7 +36,7 @@ export default function LoginScreen() {
                         name="email"
                         control={loginForm.control}
                         render={({ field: { value, onChange } }) => (
-                            <Input placeholder='E-mail' value={value} onChangeText={onChange} />
+                            <Input placeholder='E-mail' autoCapitalize="none" multiline={false} numberOfLines={1} value={value} onChangeText={onChange} />
                         )}
                     />
                 </View>
@@ -50,7 +50,7 @@ export default function LoginScreen() {
                             name="password"
                             control={loginForm.control}
                             render={({ field: { value, onChange } }) => (
-                                <Input placeholder='Senha' value={value} onChangeText={onChange} secureTextEntry={!isPasswordVisible} />
+                                <Input placeholder='Senha' autoCapitalize="none" multiline={false} numberOfLines={1} value={value} onChangeText={onChange} secureTextEntry={!isPasswordVisible} />
                             )}
                         />
                         {isPasswordVisible ?

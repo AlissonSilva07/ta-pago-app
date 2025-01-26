@@ -60,7 +60,7 @@ export default function RootLayout() {
                 backgroundColor: colors.primary
               },
               headerLeft: () => (
-                <TouchableOpacity onPress={() => router.navigate("/")}>
+                <TouchableOpacity onPress={() => router.push("/")}>
                   <ChevronLeft size={24} color={colors.textPrimary} />
                 </TouchableOpacity>
               ),
@@ -77,7 +77,7 @@ export default function RootLayout() {
                 backgroundColor: colors.primary
               },
               headerLeft: () => (
-                <TouchableOpacity onPress={() => router.navigate("/")}>
+                <TouchableOpacity onPress={() => router.push("/")}>
                   <ChevronLeft size={24} color={colors.textPrimary} />
                 </TouchableOpacity>
               ),

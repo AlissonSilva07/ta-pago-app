@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.primary,
         paddingHorizontal: 16,
-        paddingVertical: 16
+        paddingBottom: 16
     },
     title: {
         width: '100%',
