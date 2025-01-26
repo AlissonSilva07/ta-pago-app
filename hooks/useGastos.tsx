@@ -1,11 +1,11 @@
 import { createGastoSchema, GastoSchema } from '@/schemas/createGasto.schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FIREBASE_AUTH, FIREBASE_DB } from '@/firebaseConfig';
 import { ref, push, set, get } from "firebase/database";
 import { Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Expense } from '@/interfaces/expense.interface';
 
 function useGastos() {
@@ -14,6 +14,7 @@ function useGastos() {
 
     const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
+    const [refreshing, setRefreshing] = useState<boolean>(false);
     const [expenses, setExpenses] = useState<Expense[]>([])
 
     const form = useForm<GastoSchema>({
@@ -23,9 +24,7 @@ function useGastos() {
             amount: '',
             category: '',
             description: '',
-            dueDate: new Date(),
-            isPaid: false,
-            recurring: undefined
+            isPaid: false
         },
     });
 
@@ -56,6 +55,7 @@ function useGastos() {
 
     async function createGasto(data: GastoSchema) {
         setLoading(true)
+
         try {
             const user = auth.currentUser;
 
@@ -72,20 +72,40 @@ function useGastos() {
                     onPress: () => router.navigate('/(auth)/pay')
                 }
             ])
-
-
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao registrar gasto: ${error}`)
         }
     }
 
+    const onRefresh = async () => {
+        setRefreshing(true); // Start refreshing
+        try {
+            await getGastos(); // Wait for the data to be fetched
+        } catch (err) {
+            console.error('Error during refresh:', err);
+        } finally {
+            setRefreshing(false); // Stop refreshing regardless of success or failure
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            getGastos();
+            return () => {
+                setLoading(false);
+            };
+        }, [])
+    );
+
     return {
         expenses,
+        refreshing,
         loading,
         form,
         createGasto,
-        getGastos
+        getGastos,
+        onRefresh
     }
 }
 

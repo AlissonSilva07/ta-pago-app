@@ -58,11 +58,13 @@ const styles = StyleSheet.create({
   },
   topImgView: {
     flex: 1,
-    width: '100%'
+    width: '100%',
+    alignItems: 'center',
   },
   topImg: {
     height: '100%',
-    width: dimensions.width,
+    width: dimensions.width - 32,
     resizeMode: 'cover',
+    borderRadius: 16
   }
 })

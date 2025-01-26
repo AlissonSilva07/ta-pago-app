@@ -4,15 +4,20 @@ import { ThemedText } from "@/components/themedText"
 import { categoryTypes } from "@/mocks/selectCategories"
 import { colors } from "@/styles/colors"
 import { ChevronsUpDown } from "lucide-react-native"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import dayjs from "dayjs"
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { CustomButton } from "@/components/button"
 import { useGastos } from "@/hooks/useGastos"
 import { Controller } from "react-hook-form"
 import Checkbox from 'expo-checkbox';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 
 export default function CreateScreen() {
@@ -21,13 +26,14 @@ export default function CreateScreen() {
     const [expenseCategory, setExpenseCategory] = useState<string>('')
     const [isOpenExpenseCategoryModal, setIsOpenExpenseCategoryModal] = useState<boolean>(false)
     const [checkedRecurrency, setCheckedRecurrency] = useState<boolean>(false)
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [selectedDate, setSelectedDate] = useState<string>(dayjs().toISOString());
     const [modalDateVisible, setModalDateVisible] = useState(false);
 
 
     const handleExpenseCategory = (title: string) => {
         setExpenseCategory(title)
         form.setValue("category", title)
+        setIsOpenExpenseCategoryModal(false)
     }
 
     const handleOpenModalExpenseCategory = () => {
@@ -36,12 +42,18 @@ export default function CreateScreen() {
     }
 
     const handleDateChange = (event: any, date?: Date) => {
-        if (date) {
-            setSelectedDate(date);
-            form.setValue("dueDate", selectedDate)            
+        if (event.type === "dismissed") {
+            setModalDateVisible(false);
+            return;
+        }
+
+        if (date && event.type === "set") {
+            setSelectedDate(date.toISOString());
+            form.setValue("dueDate", date.toISOString());
         }
         setModalDateVisible(false);
     };
+
 
     const handleOpenModalExpenseDate = () => {
         Keyboard.dismiss()
@@ -53,12 +65,24 @@ export default function CreateScreen() {
         setCheckedRecurrency(newCheckedState);
 
         if (newCheckedState) {
-            form.setValue("recurring.type", "monthly");
-            form.setValue("recurring.nextDueDate", dayjs(selectedDate).add(1, 'month').toDate());
+            const validDate = dayjs(selectedDate).isValid();
+            if (!validDate) {
+                console.error("Invalid date: ", selectedDate);
+                return;
+            }
+
+            form.setValue("recurring.isRecurrent", true);
+            form.setValue("recurring.nextDueDate", dayjs(selectedDate).add(1, 'month').toISOString());
         } else {
-            form.setValue("recurring", undefined);
+            form.setValue("recurring.isRecurrent", false);
+            form.setValue("recurring.nextDueDate", selectedDate);
         }
     };
+
+    useEffect(() => {
+        form.setValue("recurring.isRecurrent", false);
+        form.setValue("recurring.nextDueDate", selectedDate);
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -120,7 +144,7 @@ export default function CreateScreen() {
                             <ThemedText type="smallSecondary">{form.formState.errors.dueDate?.message!}</ThemedText>
                         </View>
                         <Pressable style={styles.selectArea} onPress={handleOpenModalExpenseDate}>
-                            <Input placeholder='Selecione uma data' editable={false} value={dayjs(selectedDate).format('DD/MM/YYYY') ?? 'Selecionar um data'} onChangeText={() => { }} />
+                            <Input placeholder='Selecione uma data' editable={false} value={dayjs.utc(selectedDate).format('DD/MM/YYYY') ?? 'Selecionar um data'} onChangeText={() => { }} />
                             <ChevronsUpDown color={colors.textSecondary} style={styles.selectIcon} />
                         </Pressable>
                     </View>
@@ -177,8 +201,9 @@ export default function CreateScreen() {
                 <RNDateTimePicker
                     display="default"
                     onChange={handleDateChange}
-                    value={selectedDate}
+                    value={dayjs(selectedDate).isValid() ? dayjs(selectedDate).toDate() : new Date()}
                     minimumDate={new Date()}
+                    timeZoneName="UTC"
                     locale="pt-BR"
                     is24Hour={true}
                     positiveButton={{ label: 'Definir', textColor: colors.primary }}

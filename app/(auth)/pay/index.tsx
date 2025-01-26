@@ -6,9 +6,10 @@ import { chipTypes } from '@/mocks/chipTypes';
 import { colors } from '@/styles/colors';
 import { fonts } from '@/styles/fonts';
 import { MainShadowStyle } from '@/styles/mainShadow';
+import { useFocusEffect } from 'expo-router';
 import { DollarSign, Search } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
-import { FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { FlatList, Keyboard, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,7 +18,7 @@ export default function PayScreen() {
     const [isFocused, setIsFocused] = useState<boolean>(false);
     const [selectedChip, setSelectedChip] = useState<number | null>(0);
 
-    const { loading, getGastos, expenses } = useGastos()
+    const { refreshing, expenses, onRefresh } = useGastos()
 
 
     const onChangeQuery = (text: string) => {
@@ -27,11 +28,6 @@ export default function PayScreen() {
     const handleChipPress = (chipKey: number) => {
         setSelectedChip(chipKey);
     };
-
-    useEffect(() => {
-        getGastos()
-    }, [])
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -58,22 +54,40 @@ export default function PayScreen() {
                     keyExtractor={item => item.key.toString()}
                     contentContainerStyle={styles.flatlistChips}
                 />
-
-                <FlatList
-                    data={expenses}
-                    renderItem={(item) => (
-                        <CardExpense
-                            nome={item.item.title}
-                            status={item.item.isPaid ? 'Pago' : 'Não Pago'}
-                            valor={Number(item.item.amount)}
-                            vencimento={item.item.dueDate}
-                            onPress={() => { }}
-                        />
-                    )}
-                    keyExtractor={item => item.id.toString()}
-                    contentContainerStyle={styles.flatlistExpenses}
-                />
             </View>
+            <FlatList
+                data={expenses}
+                renderItem={(item) => (
+                    <CardExpense
+                        nome={item.item.title}
+                        status={item.item.isPaid ? 'Pago' : 'Não Pago'}
+                        valor={Number(item.item.amount)}
+                        vencimento={item.item.dueDate}
+                        onPress={() => { }}
+                    />
+                )}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={item => item.id.toString()}
+                style={styles.content}
+                contentContainerStyle={styles.flatlistExpenses}
+                ListEmptyComponent={() => (
+                    <View style={styles.emptyList}>
+                        <ThemedText type='smallSecondary'>Nenhum gasto encontrado.</ThemedText>
+                    </View>
+                )}
+                ListFooterComponent={() => expenses.length > 0 && (
+                    <View style={styles.footerList}>
+                        <ThemedText type='smallSecondary'>Puxe para atualizar.</ThemedText>
+                    </View>
+                )}
+                scrollEnabled={true}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            />
         </SafeAreaView>
     );
 }
@@ -129,9 +143,30 @@ const styles = StyleSheet.create({
         gap: 8,
         alignItems: 'center'
     },
+    content: {
+        flex: 1,
+        width: '100%',
+        flexDirection: 'column',
+    },
     flatlistExpenses: {
         width: '100%',
         flexDirection: 'column',
         gap: 16,
+    },
+    emptyList: {
+        flex: 1,
+        width: '100%',
+        flexDirection: 'column',
+        gap: 16,
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    footerList: {
+        width: '100%',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 8
     }
 });
