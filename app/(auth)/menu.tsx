@@ -1,7 +1,7 @@
 import { CustomButton } from '@/components/button';
 import { ThemedText } from '@/components/themedText';
-import { useUserContext } from '@/contexts/user-context';
-import { useLogin } from '@/hooks/useLogin';
+import { useUserContext } from '@/shared/contexts/user-context';
+import { useLogin } from '@/modules/login';
 import { colors } from '@/styles/colors';
 import { UserRound } from 'lucide-react-native';
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';

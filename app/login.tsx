@@ -1,7 +1,7 @@
 import { CustomButton } from "@/components/button"
 import { Input } from "@/components/input"
 import { ThemedText } from "@/components/themedText"
-import { useLogin } from "@/hooks/useLogin"
+import { useLogin } from "@/modules/login"
 import { colors } from "@/styles/colors"
 import { useRouter } from "expo-router"
 import { Eye, EyeOffIcon } from "lucide-react-native"
@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function LoginScreen() {
     const router = useRouter()
-    const { loading, loginForm, logIn } = useLogin()
+    const { loading, loginForm, handleLogin } = useLogin()
 
     const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false)
 
@@ -68,7 +68,7 @@ export default function LoginScreen() {
                 <View style={styles.buttonView}>
                     <CustomButton
                         title='Entrar'
-                        onPress={loginForm.handleSubmit(logIn)}
+                        onPress={loginForm.handleSubmit(handleLogin)}
                         variant={loading ? 'disabled' : 'default'}
                         disabled={loading}
                         icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}

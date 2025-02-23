@@ -1,5 +1,7 @@
-import { UserStateInterface } from '@/interfaces/user.context';
-import { createContext, useContext, useState } from 'react';
+import { UserStateInterface } from '@/modules/user/interfaces/user.interface';
+import { useGetUserData } from '@/modules/user/services/getUserData.service';
+import { useFocusEffect } from 'expo-router';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 type UserContextProps = {
     userState?: {
@@ -14,6 +16,23 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [userState, setUserState] = useState<UserStateInterface>({
         user: null
     });
+
+    async function handleGetUser() {
+        try {
+          const response = await useGetUserData.execute();
+          setUserState({
+            user: response,
+          });
+        } catch (err: any) {
+          return err;
+        }
+      }
+    
+      useFocusEffect(
+        useCallback(() => {
+            handleGetUser();
+        }, [])
+      );    
 
     const value: UserContextProps = {
         userState: {

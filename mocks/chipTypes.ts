@@ -27,16 +27,11 @@ export const chipTypes: ChipType[] = [
     },
     {
         key: 4,
-        title: 'Mais Novos',
-        checked: false
-    },
-    {
-        key: 5,
         title: 'Maior Valor',
         checked: false
     },
     {
-        key: 6,
+        key: 5,
         title: 'Menor Valor',
         checked: false
     }

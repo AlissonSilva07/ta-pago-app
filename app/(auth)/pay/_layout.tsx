@@ -23,7 +23,7 @@ export default function PayLayout() {
                     backgroundColor: colors.primary
                 },
                 headerLeft: () => (
-                    <TouchableOpacity onPress={() => router.navigate("/(auth)")}>
+                    <TouchableOpacity onPress={() => router.back()}>
                         <ChevronLeft size={24} color={colors.textPrimary} />
                     </TouchableOpacity>
                 ),
@@ -40,7 +40,7 @@ export default function PayLayout() {
                     backgroundColor: colors.primary
                 },
                 headerLeft: () => (
-                    <TouchableOpacity onPress={() => router.navigate("/(auth)")}>
+                    <TouchableOpacity onPress={() => router.back()}>
                         <ChevronLeft size={24} color={colors.textPrimary} />
                     </TouchableOpacity>
                 ),

@@ -1,13 +1,9 @@
 export interface Expense {
     id: string | number
-    title: string | null
+    title: string
     amount: string | null
     category: string | null
-    dueDate: Date | null
+    dueDate: Date
     isPaid: boolean | null
-    recurring: {
-        type: string | null
-        nextDueDate: Date | null
-    }
     description: string | null
 }

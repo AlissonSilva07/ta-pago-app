@@ -1,7 +1,9 @@
 import { SplashScreen, Stack, useRouter } from 'expo-router';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AuthContextProvider, useAuthContext } from '@/shared/contexts/auth-context';
+import { UserContextProvider } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
 import { fonts } from '@/styles/fonts';
 import {
@@ -10,18 +12,15 @@ import {
   SpaceGrotesk_600SemiBold,
   useFonts
 } from '@expo-google-fonts/space-grotesk';
-import { StatusBar, TouchableOpacity } from 'react-native';
-
-import { AuthContext, AuthProvider } from '@/contexts/auth-context';
-import { UserContextProvider } from '@/contexts/user-context';
 import { ChevronLeft } from 'lucide-react-native';
+import { StatusBar, TouchableOpacity } from 'react-native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const router = useRouter()
-  const { user } = useContext(AuthContext);
+  const { authState } = useAuthContext();
   const [loaded] = useFonts({
     SpaceGrotesk_400Regular,
     SpaceGrotesk_500Medium,
@@ -40,10 +39,10 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <AuthProvider>
+      <AuthContextProvider>
         <UserContextProvider>
           <Stack initialRouteName={
-            user ? "(auth)/index" : "login"
+            authState?.value.token ? "(auth)/index" : "login"
           }
             screenOptions={{
               navigationBarColor: colors.primary,
@@ -87,7 +86,7 @@ export default function RootLayout() {
           </Stack>
           <StatusBar barStyle='light-content' />
         </UserContextProvider>
-      </AuthProvider>
+      </AuthContextProvider>
     </SafeAreaProvider>
   );
 }

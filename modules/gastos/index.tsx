@@ -1,23 +1,20 @@
-import { createGastoSchema, GastoSchema } from '@/schemas/createGasto.schema';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useMemo, useState } from 'react';
-import { FIREBASE_AUTH, FIREBASE_DB } from '@/firebaseConfig';
-import { ref, push, set, get } from "firebase/database";
-import { Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Expense } from '@/interfaces/expense.interface';
 import debounce from 'lodash.debounce';
+import { useCallback, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Alert } from 'react-native';
+import { Expense } from './interfaces/expense.interface';
+import { createGastoSchema, GastoSchema } from './schemas/createGasto.schema';
 
 function useGastos() {
-    const auth = FIREBASE_AUTH
-    const database = FIREBASE_DB
-
     const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [expenses, setExpenses] = useState<Expense[]>([])
     const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
+    const [selectedChip, setSelectedChip] = useState<number>(0);
+    const [query, setQuery] = useState<string>('')
 
     const form = useForm<GastoSchema>({
         resolver: zodResolver(createGastoSchema),
@@ -33,22 +30,7 @@ function useGastos() {
     async function getGastos() {
         setLoading(true)
         try {
-            const user = auth.currentUser;
-
-            const expensesRef = ref(database, `users/${user?.uid}/expenses`);
-
-            const snapshot = await get(expensesRef);
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-
-                const expensesWithIds = Object.keys(data).map((key) => ({
-                    id: key,
-                    ...data[key],
-                }));
-
-                setExpenses(expensesWithIds)
-                setFilteredExpenses(expensesWithIds)
-            }
+            
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao buscar registros: ${error}`)
@@ -60,14 +42,7 @@ function useGastos() {
         setLoading(true)
 
         try {
-            const user = auth.currentUser;
-
-            const expenseRef = ref(database, `users/${user?.uid}/expenses`);
-            const newExpenseRef = push(expenseRef);
-
-            await set(newExpenseRef, data);
-
-            setLoading(false)
+            
 
             Alert.alert('Sucesso!', 'Gasto registrado com sucesso.', [
                 {
@@ -84,38 +59,21 @@ function useGastos() {
     const getGastoByName = useMemo(
         () =>
             debounce(async (name: string) => {
-                if (!name) {
-                    setFilteredExpenses(expenses);
+                if (!name || query.length === 0) {
+                    setExpenses(expenses);
                     return;
                 }
 
                 setLoading(true);
                 try {
-                    const user = auth.currentUser;
-                    const expensesRef = ref(database, `users/${user?.uid}/expenses`);
-
-                    const snapshot = await get(expensesRef);
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-
-                        const filtered = Object.keys(data)
-                            .map((key) => ({
-                                id: key,
-                                ...data[key],
-                            }))
-                            .filter((expense) =>
-                                expense.title.toLowerCase().includes(name.toLowerCase())
-                            );
-
-                        setFilteredExpenses(filtered);
-                    }
+                    
                 } catch (error) {
                     Alert.alert('Erro!', `Erro ao buscar registros: ${error}`);
                 } finally {
                     setLoading(false);
                 }
             }, 2000),
-        [expenses]
+        [expenses, query]
     );
 
 
@@ -136,20 +94,34 @@ function useGastos() {
             return () => {
                 setLoading(false);
             };
-        }, [])
+        }, [selectedChip])
     );
 
     return {
-        expenses,
-        filteredExpenses,
+        expenses: {
+            value: expenses,
+            set: setExpenses
+        },
+        filteredExpenses: {
+            value: filteredExpenses,
+            set: setFilteredExpenses
+        },
+        query: {
+            value: query,
+            set: setQuery
+        },
+        selectedChip: {
+            value: selectedChip,
+            set: setSelectedChip
+        },
         refreshing,
         loading,
         form,
         createGasto,
         getGastos,
         onRefresh,
-        getGastoByName
+        getGastoByName,
     }
 }
 
-export { useGastos }
+export { useGastos };

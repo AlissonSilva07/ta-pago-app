@@ -12,7 +12,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import RNDateTimePicker from "@react-native-community/datetimepicker"
 import { CustomButton } from "@/components/button"
-import { useGastos } from "@/hooks/useGastos"
+import { useGastos } from "@/modules/gastos"
 import { Controller } from "react-hook-form"
 import Checkbox from 'expo-checkbox';
 
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.primary,
         paddingHorizontal: 16,
-        paddingVertical: 16
+        paddingBottom: 16
     },
     scroll: {
         flex: 1,

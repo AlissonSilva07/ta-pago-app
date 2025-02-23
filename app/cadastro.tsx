@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
-import { colors } from '@/styles/colors';
-import * as ImagePicker from 'expo-image-picker';
-import { Camera, Eye, EyeOffIcon } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 import { CustomButton } from '@/components/button';
 import { Input } from '@/components/input';
 import { ThemedText } from '@/components/themedText';
-import { useLogin } from '@/hooks/useLogin';
+import { useSignUp } from '@/modules/sign-up';
+import { colors } from '@/styles/colors';
+import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import { Camera, Eye, EyeOffIcon } from 'lucide-react-native';
+import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
+import { ActivityIndicator, Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const CadastroScreen = () => {
     const router = useRouter()
-    const { signUpForm, loading, signUp } = useLogin()
+    const { handleSignUp, loading, signUpForm } = useSignUp()
 
     const [profilePicture, setProfilePicture] = useState<string | null>(null);
     const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -61,10 +61,10 @@ const CadastroScreen = () => {
                     <View style={styles.inputView}>
                         <View style={styles.inputFieldTop}>
                             <ThemedText type="smallMedium">Nome:</ThemedText>
-                            <ThemedText type="smallSecondary">{signUpForm.formState.errors.username?.message!}</ThemedText>
+                            <ThemedText type="smallSecondary">{signUpForm.formState.errors.name?.message!}</ThemedText>
                         </View>
                         <Controller
-                            name="username"
+                            name="name"
                             control={signUpForm.control}
                             render={({ field: { value, onChange } }) => (
                                 <Input placeholder='Nome' value={value} onChangeText={onChange} />
@@ -115,7 +115,7 @@ const CadastroScreen = () => {
                 <View style={styles.buttonView}>
                     <CustomButton
                         title='Cadastrar'
-                        onPress={signUpForm.handleSubmit(signUp)}
+                        onPress={signUpForm.handleSubmit(handleSignUp)}
                         variant={loading ? 'disabled' : 'default'}
                         disabled={loading}
                         icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}

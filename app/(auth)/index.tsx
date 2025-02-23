@@ -1,6 +1,6 @@
 import CardAcessoRapido from '@/components/cardAcessoRapido';
 import { ThemedText } from '@/components/themedText';
-import { useUserContext } from '@/contexts/user-context';
+import { useUserContext } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
 import { MainShadowStyle } from '@/styles/mainShadow';
 import { useRouter } from 'expo-router';

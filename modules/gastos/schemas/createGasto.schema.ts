@@ -6,10 +6,6 @@ const createGastoSchema = z.object({
     category: z.string().min(5, 'Obrigatório.'),
     dueDate: z.string({ required_error: 'Obrigatório.' }),
     isPaid: z.boolean().optional(),
-    recurring: z.object({
-      isRecurrent: z.boolean(),
-      nextDueDate: z.string(),
-    }),
     description: z.string().optional(),
   });
 

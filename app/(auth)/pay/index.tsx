@@ -1,42 +1,47 @@
 import CardExpense from '@/components/cardExpense';
 import ChipComponent from '@/components/chip';
 import { ThemedText } from '@/components/themedText';
-import { useGastos } from '@/hooks/useGastos';
+import { useGastos } from '@/modules/gastos';
 import { chipTypes } from '@/mocks/chipTypes';
 import { colors } from '@/styles/colors';
 import { fonts } from '@/styles/fonts';
-import { Search } from 'lucide-react-native';
-import { useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Plus, Search } from 'lucide-react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PayScreen() {
-    const [query, setQuery] = useState<string>('')
+    const router = useRouter()
     const [isFocused, setIsFocused] = useState<boolean>(false);
-    const [selectedChip, setSelectedChip] = useState<number | null>(0);
 
-    const { refreshing, expenses, onRefresh, getGastoByName, filteredExpenses } = useGastos()
-
+    const { refreshing, expenses, onRefresh, getGastoByName, filteredExpenses, applyFilters, selectedChip, query } = useGastos()
 
     const onChangeQuery = (text: string) => {
-        setQuery(text)
-        getGastoByName(text)
+        query.set(text)
+        getGastoByName(query.value)
     }
 
     const handleChipPress = (chipKey: number) => {
-        setSelectedChip(chipKey);
+        selectedChip.set(chipKey);
+        applyFilters(expenses.value, selectedChip.value);
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <ThemedText type='titleSmall' style={styles.title}>Histórico de gastos</ThemedText>
+            <View style={styles.titleArea}>
+                <ThemedText type='titleSmall' style={styles.title}>Histórico de gastos</ThemedText>
+                <TouchableOpacity style={styles.btnTop} onPress={() => router.navigate('/(auth)/pay/create')}>
+                    <Plus color={colors.primary} size={20} />
+                </TouchableOpacity>
+            </View>
             <View style={styles.filterArea}>
                 <View style={[styles.inputContainer, isFocused && styles.inputContainerFocused]}>
                     <Search color={colors.textPrimary} />
                     <TextInput
                         onChangeText={onChangeQuery}
-                        value={query}
+                        value={query.value}
                         placeholder={'Pesquisar por Gasto'}
                         placeholderTextColor={colors.textSecondary}
                         cursorColor={colors.cyan}
@@ -49,13 +54,13 @@ export default function PayScreen() {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     data={chipTypes}
-                    renderItem={(item) => <ChipComponent title={item.item.title} checked={item.item.key === selectedChip} onPress={() => handleChipPress(item.item.key)} />}
+                    renderItem={(item) => <ChipComponent title={item.item.title} checked={item.item.key === selectedChip.value} onPress={() => handleChipPress(item.item.key)} />}
                     keyExtractor={item => item.key.toString()}
                     contentContainerStyle={styles.flatlistChips}
                 />
             </View>
             <FlatList
-                data={query.length > 0 ? filteredExpenses : expenses}
+                data={expenses.value}
                 renderItem={(item) => (
                     <CardExpense
                         nome={item.item.title}
@@ -71,14 +76,14 @@ export default function PayScreen() {
                 contentContainerStyle={styles.flatlistExpenses}
                 ListEmptyComponent={() => (
                     <View style={styles.emptyList}>
-                        {query.length > 0 ? (
-                            <ThemedText type='smallSecondary'>{`Nenhum gasto encontrado com "${query}".`}</ThemedText>
+                        {query.value.length > 0 ? (
+                            <ThemedText type='smallSecondary'>{`Nenhum gasto encontrado com "${query.value}".`}</ThemedText>
                         ) : (
                             <ThemedText type='smallSecondary'>Nenhum gasto encontrado.</ThemedText>
                         )}
                     </View>
                 )}
-                ListFooterComponent={() => expenses.length > 0 || expenses.length > 0 && (
+                ListFooterComponent={() => expenses.value.length > 0 || expenses.value.length > 0 && (
                     <View style={styles.footerList}>
                         <ThemedText type='smallSecondary'>Puxe para atualizar.</ThemedText>
                     </View>
@@ -107,8 +112,19 @@ const styles = StyleSheet.create({
         paddingBottom: 16
     },
     title: {
-        width: '100%',
         textAlign: 'center'
+    },
+    titleArea: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    btnTop: {
+        padding: 8,
+        borderRadius: 100,
+        alignItems: 'center',
+        backgroundColor: colors.accent
     },
     inputContainer: {
         width: '100%',
