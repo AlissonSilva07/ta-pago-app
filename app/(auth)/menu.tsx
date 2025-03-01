@@ -1,19 +1,25 @@
 import { CustomButton } from '@/components/button';
+import ModalLayout from '@/components/modal';
 import { ThemedText } from '@/components/themedText';
 import { useLogin } from '@/modules/login';
+import { GetUserOutputDto } from '@/modules/user/interfaces/user.interface';
 import { useUserContext } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone'
-import utc from 'dayjs/plugin/utc'
-import { UserRound } from 'lucide-react-native';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
+import { LogOut, UserRound } from 'lucide-react-native';
 import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function MenuScreen() {
-  const { loading, handleLogout } = useLogin()
+  const router = useRouter()
+  const { loading, handleLogout, isOpenConfirmModal } = useLogin()
   const { userState } = useUserContext()
 
   return (
@@ -53,6 +59,51 @@ export default function MenuScreen() {
           icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
         />
       </View>
+      <ModalLayout
+        title="Aviso"
+        isVisible={isOpenConfirmModal.value}
+        onClose={() => isOpenConfirmModal.set(false)}
+      >
+        <View style={styles.modalBody}>
+          <View style={{
+            width: '100%',
+            alignItems: 'center'
+          }}>
+            <LogOut size={42} color={colors.cyan} />
+          </View>
+          <ThemedText type="default">
+            Deseja realmente sair do app?
+          </ThemedText>
+          <View style={{
+            height: 56
+          }}>
+            <CustomButton
+              title='Sim, desejo sair'
+              onPress={() => {
+                SecureStore.deleteItemAsync('userToken');
+                SecureStore.deleteItemAsync('tokenExpiration');
+                userState?.setValue({} as GetUserOutputDto)
+                isOpenConfirmModal.set(false)
+                router.replace('/login');
+              }}
+              variant={'default'}
+              disabled={false}
+              icon={null}
+            />
+          </View>
+          <View style={{
+            height: 56
+          }}>
+            <CustomButton
+              title='Cancelar'
+              onPress={() => isOpenConfirmModal.set(false)}
+              variant={'secondary'}
+              disabled={false}
+              icon={null}
+            />
+          </View>
+        </View>
+      </ModalLayout>
     </SafeAreaView>
   );
 }
@@ -101,5 +152,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 16,
     alignItems: 'flex-start',
-  }
+  },
+  modalBody: {
+    width: '100%',
+    flexDirection: 'column',
+    gap: 16
+  },
 });

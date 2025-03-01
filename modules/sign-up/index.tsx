@@ -9,6 +9,7 @@ import { useSignUpService } from "./services/signUp.service";
 function useSignUp() {
     const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
+    const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false)
 
     const signUpForm = useForm<SignupSchema>({
         resolver: zodResolver(createSignupSchema),
@@ -29,17 +30,9 @@ function useSignUp() {
         formData.append('password', data.password);
 
         try {
-            await useSignUpService(formData)
-            
+            await useSignUpService(formData)            
             setLoading(false)
-
-            Alert.alert('Sucesso!', 'Registro concluído com sucesso.', [
-                {
-                    text: 'Ok',
-                    style: 'default',
-                    onPress: () => router.navigate('/login')
-                }
-            ])
+            setIsOpenConfirmModal(true)
         } catch (error) {
             setLoading(false)
             console.error('Erro ao registrar usuário(a):', error);
@@ -48,6 +41,10 @@ function useSignUp() {
     }
 
     return {
+        isOpenConfirmModal: {
+            value: isOpenConfirmModal,
+            set: setIsOpenConfirmModal
+        },
         signUpForm,
         loading,
         handleSignUp,

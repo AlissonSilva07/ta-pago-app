@@ -1,11 +1,12 @@
 import { CustomButton } from '@/components/button';
 import { Input } from '@/components/input';
+import ModalLayout from '@/components/modal';
 import { ThemedText } from '@/components/themedText';
 import { useSignUp } from '@/modules/sign-up';
 import { colors } from '@/styles/colors';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { Camera, Eye, EyeOffIcon } from 'lucide-react-native';
+import { Camera, Eye, EyeOffIcon, ThumbsUp } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { ActivityIndicator, Image, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -18,7 +19,7 @@ export interface Arquivo {
 
 const CadastroScreen = () => {
     const router = useRouter()
-    const { handleSignUp, loading, signUpForm } = useSignUp()
+    const { handleSignUp, loading, signUpForm, isOpenConfirmModal } = useSignUp()
 
     const [profilePicture, setProfilePicture] = useState<string | null>(null);
     const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -139,6 +140,40 @@ const CadastroScreen = () => {
                     <ThemedText type='small' style={styles.txtLink}>Já tem uma conta? Faça Login.</ThemedText>
                 </TouchableOpacity>
             </View>
+            <ModalLayout
+                title="Sucesso!"
+                isVisible={isOpenConfirmModal.value}
+                onClose={() => {
+                    isOpenConfirmModal.set(false)
+                    router.replace('/login')
+                }}
+            >
+                <View style={styles.modalBody}>
+                    <View style={{
+                        width: '100%',
+                        alignItems: 'center'
+                    }}>
+                        <ThumbsUp size={42} color={colors.cyan} />
+                    </View>
+                    <ThemedText type="default">
+                        Você se registrou com sucesso na nossa plataforma. Agora é hora de fazer login.
+                    </ThemedText>
+                    <View style={{
+                        height: 56
+                    }}>
+                        <CustomButton
+                            title='Ir para Login'
+                            onPress={() => {
+                                isOpenConfirmModal.set(false)
+                                router.replace('/login')
+                            }}
+                            variant={'secondary'}
+                            disabled={false}
+                            icon={null}
+                        />
+                    </View>
+                </View>
+            </ModalLayout>
         </SafeAreaView>
     );
 };
@@ -214,7 +249,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'
-    }
+    },
+    modalBody: {
+        width: '100%',
+        flexDirection: 'column',
+        gap: 16
+    },
 });
 
 export default CadastroScreen;

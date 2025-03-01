@@ -6,8 +6,6 @@ import { useRouter } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert } from "react-native";
-import { GetUserOutputDto } from "../user/interfaces/user.interface";
 import { LoginInputInterface } from './interfaces/logIn.interface';
 import { useLoginService } from './services/logIn.service';
 
@@ -16,6 +14,7 @@ function useLogin() {
     const { authState } = useAuthContext()
     const { userState, getUserState } = useUserContext()
     const [loading, setLoading] = useState<boolean>(false)
+    const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false)
 
     const loginForm = useForm<LoginSchema>({
         resolver: zodResolver(createLoginSchema),
@@ -53,25 +52,14 @@ function useLogin() {
     }
 
     async function handleLogout() {
-        Alert.alert('Sair do App', 'Deseja realmente sair do app?', [
-          {
-            text: 'Cancelar',
-            onPress: () => {},
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => {
-              SecureStore.deleteItemAsync('userToken');
-              SecureStore.deleteItemAsync('tokenExpiration');
-              userState?.setValue({} as GetUserOutputDto)
-              router.replace('/login');
-            },
-          },
-        ]);
-      }
+        setIsOpenConfirmModal(true)
+    }
 
     return {
+        isOpenConfirmModal: {
+            value: isOpenConfirmModal,
+            set: setIsOpenConfirmModal
+        },
         loginForm,
         loading,
         handleLogin,
