@@ -1,20 +1,19 @@
+import { CustomButton } from "@/components/button"
 import { Input } from "@/components/input"
 import ModalLayout from "@/components/modal"
 import { ThemedText } from "@/components/themedText"
 import { categoryTypes } from "@/mocks/selectCategories"
+import { useGastos } from "@/modules/gastos"
 import { colors } from "@/styles/colors"
+import RNDateTimePicker from "@react-native-community/datetimepicker"
+import dayjs from "dayjs"
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { ChevronsUpDown } from "lucide-react-native"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { Controller } from "react-hook-form"
 import { FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import dayjs from "dayjs"
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import RNDateTimePicker from "@react-native-community/datetimepicker"
-import { CustomButton } from "@/components/button"
-import { useGastos } from "@/modules/gastos"
-import { Controller } from "react-hook-form"
-import Checkbox from 'expo-checkbox';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -25,7 +24,6 @@ export default function CreateScreen() {
 
     const [expenseCategory, setExpenseCategory] = useState<string>('')
     const [isOpenExpenseCategoryModal, setIsOpenExpenseCategoryModal] = useState<boolean>(false)
-    const [checkedRecurrency, setCheckedRecurrency] = useState<boolean>(false)
     const [selectedDate, setSelectedDate] = useState<string>(dayjs().toISOString());
     const [modalDateVisible, setModalDateVisible] = useState(false);
 
@@ -59,30 +57,6 @@ export default function CreateScreen() {
         Keyboard.dismiss()
         setModalDateVisible(true)
     }
-
-    const handleCheckRecurrency = () => {
-        const newCheckedState = !checkedRecurrency;
-        setCheckedRecurrency(newCheckedState);
-
-        if (newCheckedState) {
-            const validDate = dayjs(selectedDate).isValid();
-            if (!validDate) {
-                console.error("Invalid date: ", selectedDate);
-                return;
-            }
-
-            form.setValue("recurring.isRecurrent", true);
-            form.setValue("recurring.nextDueDate", dayjs(selectedDate).add(1, 'month').toISOString());
-        } else {
-            form.setValue("recurring.isRecurrent", false);
-            form.setValue("recurring.nextDueDate", selectedDate);
-        }
-    };
-
-    useEffect(() => {
-        form.setValue("recurring.isRecurrent", false);
-        form.setValue("recurring.nextDueDate", selectedDate);
-    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -147,14 +121,6 @@ export default function CreateScreen() {
                             <Input placeholder='Selecione uma data' editable={false} value={dayjs.utc(selectedDate).format('DD/MM/YYYY') ?? 'Selecionar um data'} onChangeText={() => { }} />
                             <ChevronsUpDown color={colors.textSecondary} style={styles.selectIcon} />
                         </Pressable>
-                    </View>
-                    <View style={styles.inputFieldRecurrency}>
-                        <Checkbox
-                            value={checkedRecurrency}
-                            onValueChange={handleCheckRecurrency}
-                            color={checkedRecurrency ? colors.orange : undefined}
-                        />
-                        <ThemedText type="default">Data recorrente?</ThemedText>
                     </View>
                 </View>
                 <View style={styles.buttonArea}>

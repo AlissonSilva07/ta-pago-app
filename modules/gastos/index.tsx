@@ -8,6 +8,8 @@ import { Expense } from './interfaces/expense.interface';
 import { createGastoSchema, GastoSchema } from './schemas/createGasto.schema';
 import { useGetGastos } from './services/getGastos.service';
 import { GetGastosInputDto } from './interfaces/getGasto.interface';
+import { usePostGastos } from './services/postGastos.service';
+import dayjs from 'dayjs';
 
 function useGastos() {
     const router = useRouter()
@@ -51,7 +53,14 @@ function useGastos() {
         setLoading(true)
 
         try {
-
+            await usePostGastos.execute({
+                amount: Number(data.amount),
+                category: data.category,
+                description: data.description!,
+                dueDate: dayjs(data.description).toDate(),
+                isPaid: false,
+                title: data.title
+            })
 
             Alert.alert('Sucesso!', 'Gasto registrado com sucesso.', [
                 {
