@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: RFValue(24),
-        fontFamily: fonts.regular,
+        fontFamily: fonts.semibold,
         lineHeight: 36,
         color: colors.textPrimary
     },

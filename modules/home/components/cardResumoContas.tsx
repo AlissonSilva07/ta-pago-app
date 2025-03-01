@@ -32,7 +32,7 @@ function CardResumoContas({ data }: CardResumoContasProps) {
                             <ThemedText type='default'>{item.title ?? 'Título'}</ThemedText>
                             <View style={styles.horizontalGap}>
                                 <ThemedText type='smallSecondary'>{dayjs.utc(item.dueDate).format('DD [de] MMM')} -</ThemedText>
-                                <ThemedText type='smallSecondary' style={{ color: item.isPaid === false ? colors.orange : colors.cyan }}>{item.isPaid === true ? "Pago" : "Não Pago"}</ThemedText>
+                                <ThemedText type='smallSecondary'>{item.isPaid === true ? "Pago" : "Não Pago"}</ThemedText>
                             </View>
                         </View>
                         <ThemedText type='smallSecondary'>R$ {item.amount ?? 'Valor'}</ThemedText>

@@ -2,8 +2,10 @@ import CardAcessoRapido from '@/components/cardAcessoRapido';
 import { ThemedText } from '@/components/themedText';
 import { useHome } from '@/modules/home';
 import { CardResumoContas } from '@/modules/home/components/cardResumoContas';
+import { CardTotalGastos } from '@/modules/home/components/cardTotalGastos';
 import { useUserContext } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
+import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
 import { Image, StyleSheet, View } from 'react-native';
@@ -51,6 +53,15 @@ export default function HomeScreen() {
       </View>
       <View style={styles.mainContent}>
         <CardResumoContas data={expensesSummaryList.value} />
+        <CardTotalGastos data={{
+          id: "ede8a032-d4c8-4810-af76-b2ecd0dc8ada",
+          title: "Conta de Luz",
+          description: "Fatura mensal de eletricidade",
+          amount: String(120),
+          category: "Moradia",
+          isPaid: false,
+          dueDate: dayjs.utc("2025-02-28T00:00:00.000Z").toDate(),
+        }} />
       </View>
     </SafeAreaView>
   );
