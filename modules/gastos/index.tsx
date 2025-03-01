@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFocusEffect, useRouter } from 'expo-router';
 import debounce from 'lodash.debounce';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert } from 'react-native';
 import { Expense } from './interfaces/expense.interface';
@@ -18,9 +18,13 @@ function useGastos() {
     const [expenseById, setExpenseById] = useState<Expense>({} as Expense)
     const [selectedChip, setSelectedChip] = useState<number>(0);
     const [query, setQuery] = useState<string>('')
-
+    const [totalPage, setTotalPage] = useState<number>(1);
+    const [page, setPage] = useState(1);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [hasMoreToLoad, setHasMoreToLoad] = useState<boolean>(false)
     const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false)
 
+    const isMounted = useRef(true);
 
     const form = useForm<GastoSchema>({
         resolver: zodResolver(createGastoSchema),
@@ -46,11 +50,20 @@ function useGastos() {
         try {
             const response = await useGetGastos.execute(filter)
             setExpenses(response.expenses)
+            const totalPages = calculateTotalPages(response.totalExpenses, response.totalPages);
+            setTotalPage(totalPages);
+            setPage(response.currentPage);
+            setHasMoreToLoad(response.currentPage < totalPages);
+
             setLoading(false)
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao buscar registros: ${error}`)
         }
+    }
+
+    function calculateTotalPages(totalExpenses: number, pageSize: number) {
+        return Math.max(1, Math.ceil(totalExpenses / pageSize));
     }
 
     async function getGastoById(idGasto: string) {
@@ -84,6 +97,36 @@ function useGastos() {
             Alert.alert('Erro!', `Erro ao registrar gasto: ${error}`)
         }
     }
+
+    const handleLoadMore = useCallback(async () => {
+        if (isRefreshing || page >= totalPage || loading) return;
+
+        try {
+            const response = await useGetGastos.execute({
+                ...filterParams,
+                page: page + 1,
+            });
+
+            if (isMounted.current) {
+                setExpenses((prevList) => {
+                    const existingIds = new Set(prevList.map(item => item.id));
+                    const newItems = response.expenses.filter(item => !existingIds.has(item.id));
+                    return [...prevList, ...newItems];
+                });
+
+                const newPage = response.currentPage;
+                const totalPages = calculateTotalPages(response.totalExpenses, filterParams.size || 10);
+
+                setPage(newPage);
+                setTotalPage(totalPages);
+                setHasMoreToLoad(newPage < totalPages);
+            }
+        } catch (err) {
+            setLoading(false);
+            Alert.alert('Erro!', `Erro ao buscar registros: ${err}`);
+        }
+    }, [page, totalPage, isRefreshing, filterParams, loading]);
+
 
     const getGastoByName = useMemo(
         () =>
@@ -192,6 +235,7 @@ function useGastos() {
             value: isOpenConfirmModal,
             set: setIsOpenConfirmModal
         },
+        hasMoreToLoad,
         refreshing,
         loading,
         form,
@@ -199,6 +243,7 @@ function useGastos() {
         getGastos,
         getGastoById,
         onRefresh,
+        handleLoadMore,
         getGastoByName,
     }
 }

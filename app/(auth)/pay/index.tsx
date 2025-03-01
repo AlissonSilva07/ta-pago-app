@@ -8,7 +8,7 @@ import { fonts } from '@/styles/fonts';
 import { useRouter } from 'expo-router';
 import { Plus, Search } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,7 +17,7 @@ export default function PayScreen() {
     const [isFocused, setIsFocused] = useState<boolean>(false);
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    const { refreshing, expenses, onRefresh, selectedChip, query, filterParams, getGastos } = useGastos()
+    const { refreshing, expenses, onRefresh, selectedChip, query, filterParams, getGastos, loading, hasMoreToLoad, handleLoadMore } = useGastos()
 
     const handleChangeQuery = (text: string) => {
         query.set(text);
@@ -43,6 +43,14 @@ export default function PayScreen() {
         }
         selectedChip.set(chipKey);
     };
+
+
+    const renderFooter = () => {
+        if (hasMoreToLoad && !loading) {
+            return <ActivityIndicator color={colors.accent} size={'small'} />
+        }
+        return null
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -76,7 +84,7 @@ export default function PayScreen() {
                 />
             </View>
             <FlatList
-                data={expenses.value}
+                data={loading ? [] : expenses.value}
                 renderItem={(item) => (
                     <CardExpense
                         nome={item.item.title}
@@ -104,11 +112,7 @@ export default function PayScreen() {
                         )}
                     </View>
                 )}
-                ListFooterComponent={() => expenses.value.length > 0 || expenses.value.length > 0 && (
-                    <View style={styles.footerList}>
-                        <ThemedText type='smallSecondary'>Puxe para atualizar.</ThemedText>
-                    </View>
-                )}
+                ListFooterComponent={renderFooter}
                 scrollEnabled={true}
                 refreshControl={
                     <RefreshControl
@@ -116,6 +120,9 @@ export default function PayScreen() {
                         onRefresh={onRefresh}
                     />
                 }
+                scrollEventThrottle={50}
+                onEndReachedThreshold={0.5}
+                onEndReached={() => hasMoreToLoad && handleLoadMore()}
             />
         </SafeAreaView>
     );
