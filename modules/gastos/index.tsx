@@ -52,12 +52,12 @@ function useGastos() {
     async function createGasto(data: GastoSchema) {
         setLoading(true)
 
-        try {
+        try {            
             await usePostGastos.execute({
                 amount: Number(data.amount),
                 category: data.category,
                 description: data.description!,
-                dueDate: dayjs(data.description).toDate(),
+                dueDate: data.dueDate,
                 isPaid: false,
                 title: data.title
             })

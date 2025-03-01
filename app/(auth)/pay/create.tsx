@@ -47,7 +47,7 @@ export default function CreateScreen() {
 
         if (date && event.type === "set") {
             setSelectedDate(date.toISOString());
-            form.setValue("dueDate", date.toISOString());
+            form.setValue("dueDate", date);
         }
         setModalDateVisible(false);
     };
