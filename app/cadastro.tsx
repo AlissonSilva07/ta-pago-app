@@ -8,7 +8,13 @@ import { useRouter } from 'expo-router';
 import { Camera, Eye, EyeOffIcon } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { ActivityIndicator, Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+export interface Arquivo {
+    uri: string,
+    type: string,
+    name: string,
+}
 
 const CadastroScreen = () => {
     const router = useRouter()
@@ -29,9 +35,17 @@ const CadastroScreen = () => {
             quality: 1,
         });
 
-        if (!result.canceled) {
-            setProfilePicture(result.assets[0].uri);
-            signUpForm.setValue("profilePicture", result.assets[0].uri);
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            const asset = result.assets[0];
+
+            const arquivo: Arquivo = {
+                uri: Platform.OS === 'android' ? asset.uri : asset.uri.replace('file://', ''),
+                type: asset.mimeType || 'application/pdf',
+                name: asset.fileName || `image_${Date.now()}.jpg`,
+            }
+
+            setProfilePicture(asset.uri);
+            if (arquivo) signUpForm.setValue("profilePicture", arquivo);
         }
     };
 

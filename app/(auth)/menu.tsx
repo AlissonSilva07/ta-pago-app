@@ -1,12 +1,12 @@
 import { CustomButton } from '@/components/button';
 import { ThemedText } from '@/components/themedText';
-import { useUserContext } from '@/shared/contexts/user-context';
 import { useLogin } from '@/modules/login';
+import { useUserContext } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
+import dayjs from 'dayjs';
 import { UserRound } from 'lucide-react-native';
-import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import dayjs from 'dayjs'
 
 export default function MenuScreen() {
   const { loading, handleLogout } = useLogin()
@@ -29,7 +29,7 @@ export default function MenuScreen() {
         </View>
         <View style={styles.headerTopText}>
           <ThemedText type='titleMedium'>{userState.value.name ?? 'Usuário(a)'}</ThemedText>
-          <ThemedText type='smallSecondary'>Ativo(a) desde: {dayjs(userState.value.createdAt).format('DD/MM/YYYY')}</ThemedText>
+          <ThemedText type='smallSecondary'>Ativo(a) desde: {dayjs(userState.value.createdAt).utc().format('DD/MM/YYYY')}</ThemedText>
         </View>
       </View>
       <View style={styles.buttonArea}>
