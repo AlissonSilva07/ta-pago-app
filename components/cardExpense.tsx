@@ -1,6 +1,6 @@
 import { colors } from "@/styles/colors"
 import { MainShadowStyle } from "@/styles/mainShadow"
-import { DollarSign } from "lucide-react-native"
+import { Component, DollarSign } from "lucide-react-native"
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native"
 import { ThemedText } from "./themedText"
 import { RFValue } from "react-native-responsive-fontsize"
@@ -20,7 +20,7 @@ export default function CardExpense({ nome, status, valor, vencimento, onPress }
         <MainShadowStyle>
             <View style={styles.expenseItem}>
                 <View style={styles.expenseItemIcon}>
-                    <DollarSign color={colors.primary} />
+                    <Component color={colors.primary} />
                 </View>
                 <View style={styles.expenseInfo}>
                     <ThemedText type='small'>{nome ?? ''}</ThemedText>

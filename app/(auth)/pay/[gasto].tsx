@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { DollarSign, ThumbsUp, TriangleAlert } from "lucide-react-native";
+import { Component, DollarSign, ThumbsUp, TriangleAlert } from "lucide-react-native";
 import { useEffect } from "react";
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -28,7 +28,7 @@ export default function GastoScreen() {
             <View style={styles.topArea}>
                 <View style={styles.titleArea}>
                     <View style={styles.expenseItemIcon}>
-                        <DollarSign color={colors.primary} size={32} />
+                        <Component color={colors.primary} size={32} />
                     </View>
                     <View style={styles.verticalSpacerSmall}>
                         <ThemedText type='smallSecondary'>#{expenseById.value.category ?? 'Categoria'}</ThemedText>

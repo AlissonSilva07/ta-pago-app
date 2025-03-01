@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/themedText"
 import { Expense } from "@/modules/gastos/interfaces/expense.interface"
 import { colors } from "@/styles/colors"
 import { MainShadowStyle } from "@/styles/mainShadow"
-import { DollarSign } from "lucide-react-native"
+import { Component, DollarSign } from "lucide-react-native"
 import { View, StyleSheet, FlatList, Text, TouchableOpacity } from "react-native"
 import { RFValue } from "react-native-responsive-fontsize"
 import dayjs from 'dayjs';
@@ -26,7 +26,7 @@ function CardResumoContas({ data }: CardResumoContasProps) {
                 renderItem={({ item }) => (
                     <View style={styles.smallCardGasto}>
                         <View style={styles.expenseItemIcon}>
-                            <DollarSign color={colors.primary} />
+                            <Component color={colors.primary} />
                         </View>
                         <View style={styles.smallCardGastoMiddle}>
                             <ThemedText type='default'>{item.title ?? 'Título'}</ThemedText>
