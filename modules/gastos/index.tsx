@@ -12,13 +12,15 @@ import { useGetGastos } from './services/getGastos.service';
 import { usePostGastos } from './services/postGastos.service';
 
 function useGastos() {
-    const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [expenses, setExpenses] = useState<Expense[]>([])
     const [expenseById, setExpenseById] = useState<Expense>({} as Expense)
     const [selectedChip, setSelectedChip] = useState<number>(0);
     const [query, setQuery] = useState<string>('')
+
+    const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false)
+
 
     const form = useForm<GastoSchema>({
         resolver: zodResolver(createGastoSchema),
@@ -66,7 +68,7 @@ function useGastos() {
     async function createGasto(data: GastoSchema) {
         setLoading(true)
 
-        try {            
+        try {
             await usePostGastos.execute({
                 amount: Number(data.amount),
                 category: data.category,
@@ -76,13 +78,7 @@ function useGastos() {
                 title: data.title
             })
             setLoading(false)
-
-            Alert.alert('Sucesso!', 'Gasto registrado com sucesso.', [
-                {
-                    text: 'Ok',
-                    onPress: () => router.navigate('/(auth)/pay')
-                }
-            ])
+            setIsOpenConfirmModal(true)
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao registrar gasto: ${error}`)
@@ -112,7 +108,20 @@ function useGastos() {
     const onRefresh = async () => {
         setRefreshing(true);
         try {
-            await getGastos(filterParams);
+            setFilterParams({
+                page: 1,
+                size: 10,
+                search: undefined,
+                sortBy: undefined,
+                sortOrder: undefined
+            })
+            await getGastos({
+                page: 1,
+                size: 10,
+                search: undefined,
+                sortBy: undefined,
+                sortOrder: undefined
+            });
         } catch (err) {
             console.error('Error during refresh:', err);
         } finally {
@@ -178,6 +187,10 @@ function useGastos() {
         selectedChip: {
             value: selectedChip,
             set: setSelectedChip
+        },
+        isOpenConfirmModal: {
+            value: isOpenConfirmModal,
+            set: setIsOpenConfirmModal
         },
         refreshing,
         loading,

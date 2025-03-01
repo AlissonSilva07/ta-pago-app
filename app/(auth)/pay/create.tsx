@@ -9,7 +9,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker"
 import dayjs from "dayjs"
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { ChevronsUpDown } from "lucide-react-native"
+import { Check, CheckCircle, ChevronsUpDown, TruckIcon } from "lucide-react-native"
 import { useState } from "react"
 import { Controller } from "react-hook-form"
 import { FlatList, Keyboard, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
@@ -20,7 +20,7 @@ dayjs.extend(timezone);
 
 
 export default function CreateScreen() {
-    const { form, createGasto } = useGastos()
+    const { form, createGasto, isOpenConfirmModal } = useGastos()
 
     const [expenseCategory, setExpenseCategory] = useState<string>('')
     const [isOpenExpenseCategoryModal, setIsOpenExpenseCategoryModal] = useState<boolean>(false)
@@ -176,6 +176,34 @@ export default function CreateScreen() {
                     negativeButton={{ label: 'Cancelar', textColor: colors.primary }}
                 />
             </Modal>
+            <ModalLayout
+                title="Sucesso!"
+                isVisible={isOpenConfirmModal.value}
+                onClose={() => isOpenConfirmModal.set(false)}
+            >
+                <View style={styles.modalBody}>
+                    <View style={{
+                        width: '100%',
+                        alignItems: 'center'
+                    }}>
+                        <CheckCircle size={42} color={colors.cyan} />
+                    </View>
+                    <ThemedText type="default">
+                        Seu gasto foi registrado com sucesso. Clique em fechar para visualizar seus gastos.
+                    </ThemedText>
+                    <View style={{
+                        height: 56
+                    }}>
+                        <CustomButton
+                            title='Fechar'
+                            onPress={() => isOpenConfirmModal.set(false)}
+                            variant={'secondary'}
+                            disabled={false}
+                            icon={null}
+                        />
+                    </View>
+                </View>
+            </ModalLayout>
         </SafeAreaView >
     )
 }

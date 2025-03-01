@@ -33,13 +33,14 @@ export default function MenuScreen() {
         </View>
         <View style={styles.headerTopText}>
           <ThemedText type='titleMedium'>{userState.value.name ?? 'Usuário(a)'}</ThemedText>
+          <ThemedText type='smallSecondary'>{userState.value.email ?? 'Email'}</ThemedText>
           <ThemedText type='smallSecondary'>Ativo(a) desde: {dayjs.utc(userState.value.createdAt).format('DD/MM/YYYY')}</ThemedText>
         </View>
       </View>
       <View style={styles.buttonArea}>
         <CustomButton
           title='Apagar todos os dados'
-          onPress={() => {}}
+          onPress={() => { }}
           variant={loading ? 'disabled' : 'destructive'}
           disabled={loading}
           icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
