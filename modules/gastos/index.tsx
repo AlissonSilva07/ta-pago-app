@@ -11,6 +11,7 @@ import { useGetGastoById } from './services/getGastoById.service';
 import { useGetGastos } from './services/getGastos.service';
 import { usePostGastos } from './services/postGastos.service';
 import { useDeleteGastoById } from './services/deleteGastoById.service';
+import { usePayGastoById } from './services/payGastoById.service';
 
 function useGastos() {
     const [loading, setLoading] = useState<boolean>(false)
@@ -23,8 +24,10 @@ function useGastos() {
     const [page, setPage] = useState(1);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [hasMoreToLoad, setHasMoreToLoad] = useState<boolean>(false)
+
     const [isOpenConfirmPostModal, setIsOpenConfirmPostModal] = useState<boolean>(false)
     const [isOpenConfirmDeleteModal, setIsOpenConfirmDeleteModal] = useState<boolean>(false)
+    const [isOpenConfirmPayModal, setIsOpenConfirmPayModal] = useState<boolean>(false)
 
 
     const isMounted = useRef(true);
@@ -106,6 +109,19 @@ function useGastos() {
         try {
             await useDeleteGastoById.execute(idGasto)
             resetFilters()
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            Alert.alert('Erro!', `Erro ao registrar gasto: ${error}`)
+        }
+    }
+
+    async function makGastoAsPaid(idGasto: string) {
+        setLoading(true)
+        try {
+            await usePayGastoById.execute(idGasto)
+            resetFilters()
+            setIsOpenConfirmPayModal(true)
             setLoading(false)
         } catch (error) {
             setLoading(false)
@@ -262,6 +278,10 @@ function useGastos() {
             value: isOpenConfirmDeleteModal,
             set: setIsOpenConfirmDeleteModal
         },
+        isOpenConfirmPayModal: {
+            value: isOpenConfirmPayModal,
+            set: setIsOpenConfirmPayModal
+        },
         hasMoreToLoad,
         refreshing,
         loading,
@@ -270,6 +290,7 @@ function useGastos() {
         getGastos,
         getGastoById,
         deleteGasto,
+        makGastoAsPaid,
         onRefresh,
         handleLoadMore,
         resetFilters,

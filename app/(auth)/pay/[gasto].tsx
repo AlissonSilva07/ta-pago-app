@@ -4,10 +4,10 @@ import { ThemedText } from "@/components/themedText";
 import { useGastos } from "@/modules/gastos";
 import { colors } from "@/styles/colors";
 import dayjs from "dayjs";
-import timezone from 'dayjs/plugin/timezone'
-import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { DollarSign, FileWarning, ThumbsUp, TriangleAlert } from "lucide-react-native";
+import { DollarSign, ThumbsUp, TriangleAlert } from "lucide-react-native";
 import { useEffect } from "react";
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -17,7 +17,7 @@ dayjs.extend(timezone);
 export default function GastoScreen() {
     const router = useRouter()
     const { gasto } = useLocalSearchParams();
-    const { expenseById, getGastoById, loading, isOpenConfirmDeleteModal, deleteGasto, resetFilters } = useGastos()
+    const { expenseById, getGastoById, loading, isOpenConfirmDeleteModal, deleteGasto, isOpenConfirmPayModal, makGastoAsPaid } = useGastos()
 
     useEffect(() => {
         getGastoById(gasto.toString())
@@ -52,7 +52,7 @@ export default function GastoScreen() {
             <View style={styles.buttonArea}>
                 <CustomButton
                     title='Tá Pago!'
-                    onPress={() => { }}
+                    onPress={() => makGastoAsPaid(expenseById.value.id)}
                     variant={loading || expenseById.value.isPaid ? 'disabled' : 'default'}
                     disabled={loading || expenseById.value.isPaid ? true : false}
                     icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
@@ -103,6 +103,40 @@ export default function GastoScreen() {
                         <CustomButton
                             title='Cancelar'
                             onPress={() => isOpenConfirmDeleteModal.set(false)}
+                            variant={'secondary'}
+                            disabled={false}
+                            icon={null}
+                        />
+                    </View>
+                </View>
+            </ModalLayout>
+            <ModalLayout
+                title="Sucesso!"
+                isVisible={isOpenConfirmPayModal.value}
+                onClose={() => {
+                    isOpenConfirmPayModal.set(false)
+                    router.replace('/(auth)/pay')
+                }}
+            >
+                <View style={styles.modalBody}>
+                    <View style={{
+                        width: '100%',
+                        alignItems: 'center'
+                    }}>
+                        <ThumbsUp size={42} color={colors.cyan} />
+                    </View>
+                    <ThemedText type="default">
+                        Você pagou a sua conta. Ficamos felizes com o seu avanço financeiro!
+                    </ThemedText>
+                    <View style={{
+                        height: 56
+                    }}>
+                        <CustomButton
+                            title='Fechar'
+                            onPress={() => {
+                                isOpenConfirmPayModal.set(false)
+                                router.replace('/(auth)/pay')
+                            }}
                             variant={'secondary'}
                             disabled={false}
                             icon={null}

@@ -2,17 +2,17 @@ import { http } from '@/shared/api/config';
 import { AxiosInstance } from 'axios';
 import { Expense } from '../interfaces/expense.interface';
 
-class DeleteGastoById {
+class PayGastoById {
 	constructor(private readonly api: AxiosInstance) { }
 
 	async execute(id: string): Promise<void> {
-		const result = await this.api.delete<void>(
-			`/expenses/${id}`
+		const result = await this.api.patch<void>(
+			`/expenses/${id}/pay`
 		);
 		return result.data;
 	}
 }
 
-const useDeleteGastoById = new DeleteGastoById(http);
+const usePayGastoById = new PayGastoById(http);
 
-export { DeleteGastoById, useDeleteGastoById };
+export { PayGastoById, usePayGastoById };
