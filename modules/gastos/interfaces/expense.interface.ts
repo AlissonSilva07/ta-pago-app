@@ -1,9 +1,9 @@
 export interface Expense {
     id: string
     title: string
-    amount: string | null
-    category: string | null
+    amount: string
+    category: string
     dueDate: Date
-    isPaid: boolean | null
+    isPaid: boolean
     description: string | null
 }

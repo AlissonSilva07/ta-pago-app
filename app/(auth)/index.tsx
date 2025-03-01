@@ -1,17 +1,18 @@
 import CardAcessoRapido from '@/components/cardAcessoRapido';
 import { ThemedText } from '@/components/themedText';
+import { useHome } from '@/modules/home';
+import { CardResumoContas } from '@/modules/home/components/cardResumoContas';
 import { useUserContext } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
-import { MainShadowStyle } from '@/styles/mainShadow';
 import { useRouter } from 'expo-router';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
-import { useEffect } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter()
   const { userState } = useUserContext()
+  const { expensesSummaryList, loading } = useHome()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -49,10 +50,7 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={styles.mainContent}>
-        <ThemedText type='default'>Home</ThemedText>
-        <MainShadowStyle>
-          <ThemedText type='titleSmallMedium'>Conteúdo</ThemedText>
-        </MainShadowStyle>
+        <CardResumoContas data={expensesSummaryList.value} />
       </View>
     </SafeAreaView>
   );
