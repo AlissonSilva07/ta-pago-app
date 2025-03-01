@@ -1,5 +1,5 @@
 export interface Expense {
-    id: string | number
+    id: string
     title: string
     amount: string | null
     category: string | null

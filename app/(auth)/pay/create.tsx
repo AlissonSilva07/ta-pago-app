@@ -20,7 +20,7 @@ dayjs.extend(timezone);
 
 
 export default function CreateScreen() {
-    const { form, createGasto, isOpenConfirmModal } = useGastos()
+    const { form, createGasto, isOpenConfirmPostModal } = useGastos()
 
     const [expenseCategory, setExpenseCategory] = useState<string>('')
     const [isOpenExpenseCategoryModal, setIsOpenExpenseCategoryModal] = useState<boolean>(false)
@@ -178,8 +178,8 @@ export default function CreateScreen() {
             </Modal>
             <ModalLayout
                 title="Sucesso!"
-                isVisible={isOpenConfirmModal.value}
-                onClose={() => isOpenConfirmModal.set(false)}
+                isVisible={isOpenConfirmPostModal.value}
+                onClose={() => isOpenConfirmPostModal.set(false)}
             >
                 <View style={styles.modalBody}>
                     <View style={{
@@ -196,7 +196,7 @@ export default function CreateScreen() {
                     }}>
                         <CustomButton
                             title='Fechar'
-                            onPress={() => isOpenConfirmModal.set(false)}
+                            onPress={() => isOpenConfirmPostModal.set(false)}
                             variant={'secondary'}
                             disabled={false}
                             icon={null}

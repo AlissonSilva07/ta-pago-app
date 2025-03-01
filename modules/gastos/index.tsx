@@ -10,6 +10,7 @@ import { createGastoSchema, GastoSchema } from './schemas/createGasto.schema';
 import { useGetGastoById } from './services/getGastoById.service';
 import { useGetGastos } from './services/getGastos.service';
 import { usePostGastos } from './services/postGastos.service';
+import { useDeleteGastoById } from './services/deleteGastoById.service';
 
 function useGastos() {
     const [loading, setLoading] = useState<boolean>(false)
@@ -22,7 +23,9 @@ function useGastos() {
     const [page, setPage] = useState(1);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [hasMoreToLoad, setHasMoreToLoad] = useState<boolean>(false)
-    const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false)
+    const [isOpenConfirmPostModal, setIsOpenConfirmPostModal] = useState<boolean>(false)
+    const [isOpenConfirmDeleteModal, setIsOpenConfirmDeleteModal] = useState<boolean>(false)
+
 
     const isMounted = useRef(true);
 
@@ -91,7 +94,19 @@ function useGastos() {
                 title: data.title
             })
             setLoading(false)
-            setIsOpenConfirmModal(true)
+            setIsOpenConfirmPostModal(true)
+        } catch (error) {
+            setLoading(false)
+            Alert.alert('Erro!', `Erro ao registrar gasto: ${error}`)
+        }
+    }
+
+    async function deleteGasto(idGasto: string) {
+        setLoading(true)
+        try {
+            await useDeleteGastoById.execute(idGasto)
+            resetFilters()
+            setLoading(false)
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao registrar gasto: ${error}`)
@@ -152,18 +167,14 @@ function useGastos() {
         setRefreshing(true);
         try {
             setFilterParams({
+                ...filterParams,
                 page: 1,
-                size: 10,
-                search: undefined,
-                sortBy: undefined,
-                sortOrder: undefined
+                size: 10
             })
-            await getGastos({
+            getGastos({
+                ...filterParams,
                 page: 1,
-                size: 10,
-                search: undefined,
-                sortBy: undefined,
-                sortOrder: undefined
+                size: 10
             });
         } catch (err) {
             console.error('Error during refresh:', err);
@@ -171,6 +182,18 @@ function useGastos() {
             setRefreshing(false);
         }
     };
+
+    async function resetFilters() {
+        setFilterParams({
+            page: 1,
+            size: 10,
+            search: undefined,
+            sortBy: undefined,
+            sortOrder: undefined
+        })
+        getGastos(filterParams)
+        setSelectedChip(0)
+    }
 
     useFocusEffect(
         useCallback(() => {
@@ -231,9 +254,13 @@ function useGastos() {
             value: selectedChip,
             set: setSelectedChip
         },
-        isOpenConfirmModal: {
-            value: isOpenConfirmModal,
-            set: setIsOpenConfirmModal
+        isOpenConfirmPostModal: {
+            value: isOpenConfirmPostModal,
+            set: setIsOpenConfirmPostModal
+        },
+        isOpenConfirmDeleteModal: {
+            value: isOpenConfirmDeleteModal,
+            set: setIsOpenConfirmDeleteModal
         },
         hasMoreToLoad,
         refreshing,
@@ -242,8 +269,10 @@ function useGastos() {
         createGasto,
         getGastos,
         getGastoById,
+        deleteGasto,
         onRefresh,
         handleLoadMore,
+        resetFilters,
         getGastoByName,
     }
 }

@@ -1,12 +1,13 @@
 import { CustomButton } from "@/components/button";
+import ModalLayout from "@/components/modal";
 import { ThemedText } from "@/components/themedText";
 import { useGastos } from "@/modules/gastos";
 import { colors } from "@/styles/colors";
 import dayjs from "dayjs";
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useLocalSearchParams } from "expo-router";
-import { DollarSign } from "lucide-react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { DollarSign, FileWarning, ThumbsUp, TriangleAlert } from "lucide-react-native";
 import { useEffect } from "react";
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -14,8 +15,9 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function GastoScreen() {
+    const router = useRouter()
     const { gasto } = useLocalSearchParams();
-    const { expenseById, getGastoById, loading } = useGastos()
+    const { expenseById, getGastoById, loading, isOpenConfirmDeleteModal, deleteGasto, resetFilters } = useGastos()
 
     useEffect(() => {
         getGastoById(gasto.toString())
@@ -57,12 +59,57 @@ export default function GastoScreen() {
                 />
                 <CustomButton
                     title='Excluir Gasto'
-                    onPress={() => {}}
+                    onPress={() => isOpenConfirmDeleteModal.set(true)}
                     variant={loading ? 'disabled' : 'destructive'}
                     disabled={loading}
                     icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}
                 />
             </View>
+
+            <ModalLayout
+                title="Atenção"
+                isVisible={isOpenConfirmDeleteModal.value}
+                onClose={() => {
+                    isOpenConfirmDeleteModal.set(false)
+                }}
+            >
+                <View style={styles.modalBody}>
+                    <View style={{
+                        width: '100%',
+                        alignItems: 'center'
+                    }}>
+                        <TriangleAlert size={42} color={colors.cyan} />
+                    </View>
+                    <ThemedText type="default">
+                        Deseja realmente excluir o gasto "{expenseById.value.title}"?. Essa ação não poderá ser desfeita.
+                    </ThemedText>
+                    <View style={{
+                        height: 56
+                    }}>
+                        <CustomButton
+                            title='Sim, prosseguir'
+                            onPress={() => {
+                                deleteGasto(expenseById.value.id)
+                                router.replace('/(auth)/pay')
+                            }}
+                            variant={'destructive'}
+                            disabled={false}
+                            icon={null}
+                        />
+                    </View>
+                    <View style={{
+                        height: 56
+                    }}>
+                        <CustomButton
+                            title='Cancelar'
+                            onPress={() => isOpenConfirmDeleteModal.set(false)}
+                            variant={'secondary'}
+                            disabled={false}
+                            icon={null}
+                        />
+                    </View>
+                </View>
+            </ModalLayout>
         </SafeAreaView>
     )
 }
@@ -120,6 +167,11 @@ const styles = StyleSheet.create({
         gap: 16,
         alignItems: 'flex-start',
         justifyContent: 'flex-end'
-    }
+    },
+    modalBody: {
+        width: '100%',
+        flexDirection: 'column',
+        gap: 16
+    },
 })
 
