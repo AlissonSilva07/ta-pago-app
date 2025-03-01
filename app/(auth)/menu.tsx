@@ -9,17 +9,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import dayjs from 'dayjs'
 
 export default function MenuScreen() {
-  const { loading, logOut } = useLogin()
+  const { loading, handleLogout } = useLogin()
   const { userState } = useUserContext()
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerTop}>
         <View style={styles.headerTopImg}>
-          {userState?.value.user?.profilePicture ? (
+          {userState?.value.profilePicture ? (
             <Image
               source={{
-                uri: `data:image/jpeg;base64,${userState?.value.user?.profilePicture}`, // Displaying the Base64 image
+                uri: `data:image/jpeg;base64,${userState.value.profilePicture}`, // Displaying the Base64 image
               }}
               style={styles.userImg}
             />
@@ -28,8 +28,8 @@ export default function MenuScreen() {
           )}
         </View>
         <View style={styles.headerTopText}>
-          <ThemedText type='titleMedium'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
-          <ThemedText type='smallSecondary'>Ativo(a) desde: {dayjs(userState?.value.user?.createdAt).format('DD/MM/YYYY')}</ThemedText>
+          <ThemedText type='titleMedium'>{userState.value.name ?? 'Usuário(a)'}</ThemedText>
+          <ThemedText type='smallSecondary'>Ativo(a) desde: {dayjs(userState.value.createdAt).format('DD/MM/YYYY')}</ThemedText>
         </View>
       </View>
       <View style={styles.buttonArea}>
@@ -42,7 +42,7 @@ export default function MenuScreen() {
         />
         <CustomButton
           title='Sair do App'
-          onPress={logOut}
+          onPress={handleLogout}
           variant={loading ? 'disabled' : 'secondary'}
           disabled={loading}
           icon={loading ? <ActivityIndicator size="small" color={colors.textPrimary} /> : null}

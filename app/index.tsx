@@ -1,15 +1,28 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from '@/styles/colors'
 import { CustomButton } from '@/components/button'
 import { ThemedText } from '@/components/themedText'
 import { useRouter } from 'expo-router'
+import { validateToken } from '@/shared/hooks/validateToken'
 
 const dimensions = Dimensions.get('screen')
 
 export default function Welcome() {
   const router = useRouter()
+
+  useEffect(() => {
+    const check = async () => {
+      const isLoggedIn = await validateToken();
+      if (isLoggedIn) {
+        router.navigate('/(auth)');
+      }
+    };
+
+    check();
+  }, []);
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topImgView}>

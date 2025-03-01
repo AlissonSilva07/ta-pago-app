@@ -5,6 +5,7 @@ import { colors } from '@/styles/colors';
 import { MainShadowStyle } from '@/styles/mainShadow';
 import { useRouter } from 'expo-router';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
+import { useEffect } from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,15 +19,15 @@ export default function HomeScreen() {
         <View style={styles.headerTopView}>
           <View style={styles.headerTopText}>
             <ThemedText type='smallSecondary'>Olá,</ThemedText>
-            <ThemedText type='titleMedium'>{userState?.value.user?.username ?? 'Usuário(a)'}</ThemedText>
+            <ThemedText type='titleMedium'>{userState.value.name ?? 'Usuário(a)'}</ThemedText>
           </View>
           <View style={styles.headerTopImg}>
-            {userState?.value.user?.profilePicture ? (
+            {userState.value.profilePicture ? (
               <Image
                 source={{
-                  uri: `data:image/jpeg;base64,${userState?.value.user?.profilePicture}`, // Displaying the Base64 image
+                  uri: `data:image/jpeg;base64,${userState.value.profilePicture}`, // Displaying the Base64 image
                 }}
-                style={styles.userImg} 
+                style={styles.userImg}
               />
             ) : (
               <UserRound size={24} color={colors.accent} />

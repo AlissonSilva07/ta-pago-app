@@ -3,10 +3,7 @@ interface GetUserOutputDto {
 	name: string,
 	email: string,
 	profilePicture: Blob | null,
-}
-
-export interface UserStateInterface {
-	user: GetUserOutputDto | null
+	createdAt: Date | null
 }
 
 export { GetUserOutputDto }

@@ -14,7 +14,7 @@ import { useLoginService } from './services/logIn.service';
 function useLogin() {
     const router = useRouter()
     const { authState } = useAuthContext()
-    const { userState } = useUserContext()
+    const { userState, getUserState } = useUserContext()
     const [loading, setLoading] = useState<boolean>(false)
 
     const loginForm = useForm<LoginSchema>({
@@ -37,14 +37,13 @@ function useLogin() {
     };
 
     async function handleLogin(data: LoginInputInterface) {
-        console.log(data)
         setLoading(true)
         try {
             const result = await useLoginService.execute(data);
-            console.log(result.message)
             authState?.setValue({
                 token: result.token
             });
+            getUserState()
             storeToken(result.token);
             setLoading(false)
         } catch (err: any) {
@@ -54,7 +53,7 @@ function useLogin() {
     }
 
     async function handleLogout() {
-        Alert.alert('Sair do App', 'Deseja realmente sair do MCI?', [
+        Alert.alert('Sair do App', 'Deseja realmente sair do app?', [
           {
             text: 'Cancelar',
             onPress: () => {},
@@ -63,12 +62,9 @@ function useLogin() {
           {
             text: 'OK',
             onPress: () => {
-              SecureStore.setItem('userToken', JSON.stringify({}));
-              SecureStore.setItem('userLogged', JSON.stringify({}));
-              SecureStore.setItem('tokenExpiration', JSON.stringify({}));
-              userState?.setValue({
-                user: {} as GetUserOutputDto,
-              });
+              SecureStore.deleteItemAsync('userToken');
+              SecureStore.deleteItemAsync('tokenExpiration');
+              userState?.setValue({} as GetUserOutputDto)
               router.replace('/login');
             },
           },
