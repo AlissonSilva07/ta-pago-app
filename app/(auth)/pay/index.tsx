@@ -1,13 +1,13 @@
 import CardExpense from '@/components/cardExpense';
 import ChipComponent from '@/components/chip';
 import { ThemedText } from '@/components/themedText';
-import { useGastos } from '@/modules/gastos';
 import { chipTypes } from '@/mocks/chipTypes';
+import { useGastos } from '@/modules/gastos';
 import { colors } from '@/styles/colors';
 import { fonts } from '@/styles/fonts';
 import { useRouter } from 'expo-router';
 import { Plus, Search } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,17 +15,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function PayScreen() {
     const router = useRouter()
     const [isFocused, setIsFocused] = useState<boolean>(false);
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    const { refreshing, expenses, onRefresh, getGastoByName, filteredExpenses, applyFilters, selectedChip, query } = useGastos()
+    const { refreshing, expenses, onRefresh, selectedChip, query, filterParams, getGastos } = useGastos()
 
-    const onChangeQuery = (text: string) => {
-        query.set(text)
-        getGastoByName(query.value)
-    }
+    const handleChangeQuery = (text: string) => {
+        query.set(text);
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+
+        debounceTimeout.current = setTimeout(() => {
+            filterParams.set({
+                ...filterParams.value,
+                search: text
+            })
+            getGastos({
+                ...filterParams.value,
+                search: text
+            })
+        }, 750);
+    };
 
     const handleChipPress = (chipKey: number) => {
+        if (chipKey === selectedChip.value) {
+            return;
+        }
         selectedChip.set(chipKey);
-        applyFilters(expenses.value, selectedChip.value);
     };
 
     return (
@@ -40,7 +56,7 @@ export default function PayScreen() {
                 <View style={[styles.inputContainer, isFocused && styles.inputContainerFocused]}>
                     <Search color={colors.textPrimary} />
                     <TextInput
-                        onChangeText={onChangeQuery}
+                        onChangeText={handleChangeQuery}
                         value={query.value}
                         placeholder={'Pesquisar por Gasto'}
                         placeholderTextColor={colors.textSecondary}

@@ -12,27 +12,22 @@ export const chipTypes: ChipType[] = [
     },
     {
         key: 1,
-        title: 'Vencido',
+        title: "Vencimento Próximo",
         checked: false
     },
     {
         key: 2,
-        title: 'Mais Recentes',
+        title: 'Vencimento Distante',
         checked: false
     },
     {
         key: 3,
-        title: 'Mais Antigos',
+        title: 'Ordem: A-Z',
         checked: false
     },
     {
         key: 4,
-        title: 'Maior Valor',
-        checked: false
-    },
-    {
-        key: 5,
-        title: 'Menor Valor',
+        title: 'Ordem: Z-A',
         checked: false
     }
 ] 

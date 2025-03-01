@@ -6,13 +6,14 @@ import { useForm } from 'react-hook-form';
 import { Alert } from 'react-native';
 import { Expense } from './interfaces/expense.interface';
 import { createGastoSchema, GastoSchema } from './schemas/createGasto.schema';
+import { useGetGastos } from './services/getGastos.service';
+import { GetGastosInputDto } from './interfaces/getGasto.interface';
 
 function useGastos() {
     const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [expenses, setExpenses] = useState<Expense[]>([])
-    const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
     const [selectedChip, setSelectedChip] = useState<number>(0);
     const [query, setQuery] = useState<string>('')
 
@@ -27,22 +28,30 @@ function useGastos() {
         },
     });
 
-    async function getGastos() {
+    const [filterParams, setFilterParams] = useState<GetGastosInputDto>({
+        page: 1,
+        size: 10,
+        search: undefined,
+        sortBy: undefined,
+        sortOrder: undefined
+    });
+
+    async function getGastos(filter: GetGastosInputDto) {
         setLoading(true)
         try {
-            
+            const response = await useGetGastos.execute(filter)
+            setExpenses(response.expenses)
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao buscar registros: ${error}`)
         }
     }
 
-
     async function createGasto(data: GastoSchema) {
         setLoading(true)
 
         try {
-            
+
 
             Alert.alert('Sucesso!', 'Gasto registrado com sucesso.', [
                 {
@@ -66,7 +75,7 @@ function useGastos() {
 
                 setLoading(true);
                 try {
-                    
+
                 } catch (error) {
                     Alert.alert('Erro!', `Erro ao buscar registros: ${error}`);
                 } finally {
@@ -80,7 +89,7 @@ function useGastos() {
     const onRefresh = async () => {
         setRefreshing(true);
         try {
-            await getGastos();
+            await getGastos(filterParams);
         } catch (err) {
             console.error('Error during refresh:', err);
         } finally {
@@ -90,7 +99,36 @@ function useGastos() {
 
     useFocusEffect(
         useCallback(() => {
-            getGastos();
+            setFilterParams({
+                ...filterParams,
+                sortBy:
+                    selectedChip === 1 ? 'dueDate' :
+                        selectedChip === 2 ? 'dueDate' :
+                            selectedChip === 3 ? 'title' :
+                                selectedChip === 4 ? 'title' :
+                                    undefined,
+                sortOrder:
+                    selectedChip === 1 ? 'asc' :
+                        selectedChip === 2 ? 'desc' :
+                            selectedChip === 3 ? 'asc' :
+                                selectedChip === 4 ? 'desc' :
+                                    undefined,
+            })
+            getGastos({
+                ...filterParams,
+                sortBy:
+                    selectedChip === 1 ? 'dueDate' :
+                        selectedChip === 2 ? 'dueDate' :
+                            selectedChip === 3 ? 'title' :
+                                selectedChip === 4 ? 'title' :
+                                    undefined,
+                sortOrder:
+                    selectedChip === 1 ? 'asc' :
+                        selectedChip === 2 ? 'desc' :
+                            selectedChip === 3 ? 'asc' :
+                                selectedChip === 4 ? 'desc' :
+                                    undefined,
+            });
             return () => {
                 setLoading(false);
             };
@@ -102,9 +140,9 @@ function useGastos() {
             value: expenses,
             set: setExpenses
         },
-        filteredExpenses: {
-            value: filteredExpenses,
-            set: setFilteredExpenses
+        filterParams: {
+            value: filterParams,
+            set: setFilterParams
         },
         query: {
             value: query,
