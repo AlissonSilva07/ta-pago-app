@@ -46,19 +46,23 @@ export default function PayLayout() {
                 ),
                 headerShadowVisible: false,
             }} />
+            <Stack.Screen name="[gasto]" options={{
+                title: 'Detalhamento do Gasto',
+                headerTitleAlign: 'center',
+                headerTitleStyle: {
+                    fontFamily: fonts.regular,
+                    color: colors.textPrimary
+                },
+                headerStyle: {
+                    backgroundColor: colors.primary
+                },
+                headerLeft: () => (
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <ChevronLeft size={24} color={colors.textPrimary} />
+                    </TouchableOpacity>
+                ),
+                headerShadowVisible: false,
+            }} />
         </Stack>
     );
 }
-
-const styles = StyleSheet.create({
-    iconBg: {
-        height: 52,
-        width: 52,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderRadius: 100
-    }
-})

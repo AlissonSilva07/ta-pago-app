@@ -11,11 +11,6 @@ export function MainShadowStyle({ children }: MainShadowStyleProps) {
     return (
         <View style={styles.container}>
             <View style={[styles.shadowLayer, styles.dropShadow1]} />
-            <View style={[styles.shadowLayer, styles.dropShadow2]} />
-            <View style={[styles.shadowLayer, styles.dropShadow3]} />
-            <View style={[styles.shadowLayer, styles.dropShadow4]} />
-            <View style={[styles.shadowLayer, styles.innerShadow1]} />
-            <View style={[styles.shadowLayer, styles.innerShadow2]} />
             <View style={styles.customBox}>
                 {children}
             </View>

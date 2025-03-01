@@ -83,7 +83,12 @@ export default function PayScreen() {
                         status={item.item.isPaid ? 'Pago' : 'Não Pago'}
                         valor={Number(item.item.amount)}
                         vencimento={item.item.dueDate}
-                        onPress={() => { }}
+                        onPress={() => router.navigate({
+                            pathname: '/(auth)/pay/[gasto]',
+                            params: {
+                                gasto: item.item.id
+                            }
+                        })}
                     />
                 )}
                 showsVerticalScrollIndicator={false}

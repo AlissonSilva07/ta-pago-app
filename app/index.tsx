@@ -6,16 +6,19 @@ import { CustomButton } from '@/components/button'
 import { ThemedText } from '@/components/themedText'
 import { useRouter } from 'expo-router'
 import { validateToken } from '@/shared/hooks/validateToken'
+import { useUserContext } from '@/shared/contexts/user-context'
 
 const dimensions = Dimensions.get('screen')
 
 export default function Welcome() {
   const router = useRouter()
+  const { getUserState } = useUserContext()
 
   useEffect(() => {
     const check = async () => {
       const isLoggedIn = await validateToken();
       if (isLoggedIn) {
+        getUserState()
         router.navigate('/(auth)');
       }
     };

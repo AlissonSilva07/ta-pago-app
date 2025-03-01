@@ -11,7 +11,7 @@ interface CardExpenseProps {
     nome: string | null
     valor: number | null
     vencimento: Date | null
-    status: string | null
+    status: "Pago" | "Não Pago"
     onPress?: () => void
 }
 
@@ -26,7 +26,7 @@ export default function CardExpense({ nome, status, valor, vencimento, onPress }
                     <ThemedText type='small'>{nome ?? ''}</ThemedText>
                     <ThemedText type='titleMedium'>R$ {valor}</ThemedText>
                     <ThemedText type='smallSecondary'>Vencimento: {dayjs(vencimento).format('DD/MM/YYYY') ?? ''}</ThemedText>
-                    <ThemedText type='small'>Status: {status}</ThemedText>
+                    <ThemedText type='small'>Status: <ThemedText children={status} type="small" style={{ color: status === 'Não Pago' ? colors.orange : colors.cyan }} /></ThemedText>
                 </View>
                 <TouchableOpacity onPress={onPress}>
                     <Text style={styles.expenseButton}>Abrir</Text>

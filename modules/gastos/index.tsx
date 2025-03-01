@@ -5,17 +5,18 @@ import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert } from 'react-native';
 import { Expense } from './interfaces/expense.interface';
-import { createGastoSchema, GastoSchema } from './schemas/createGasto.schema';
-import { useGetGastos } from './services/getGastos.service';
 import { GetGastosInputDto } from './interfaces/getGasto.interface';
+import { createGastoSchema, GastoSchema } from './schemas/createGasto.schema';
+import { useGetGastoById } from './services/getGastoById.service';
+import { useGetGastos } from './services/getGastos.service';
 import { usePostGastos } from './services/postGastos.service';
-import dayjs from 'dayjs';
 
 function useGastos() {
     const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [expenses, setExpenses] = useState<Expense[]>([])
+    const [expenseById, setExpenseById] = useState<Expense>({} as Expense)
     const [selectedChip, setSelectedChip] = useState<number>(0);
     const [query, setQuery] = useState<string>('')
 
@@ -43,6 +44,19 @@ function useGastos() {
         try {
             const response = await useGetGastos.execute(filter)
             setExpenses(response.expenses)
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            Alert.alert('Erro!', `Erro ao buscar registros: ${error}`)
+        }
+    }
+
+    async function getGastoById(idGasto: string) {
+        setLoading(true)
+        try {
+            const response = await useGetGastoById.execute(idGasto)
+            setExpenseById(response)
+            setLoading(false)
         } catch (error) {
             setLoading(false)
             Alert.alert('Erro!', `Erro ao buscar registros: ${error}`)
@@ -61,6 +75,7 @@ function useGastos() {
                 isPaid: false,
                 title: data.title
             })
+            setLoading(false)
 
             Alert.alert('Sucesso!', 'Gasto registrado com sucesso.', [
                 {
@@ -81,7 +96,6 @@ function useGastos() {
                     setExpenses(expenses);
                     return;
                 }
-
                 setLoading(true);
                 try {
 
@@ -145,6 +159,10 @@ function useGastos() {
     );
 
     return {
+        expenseById: {
+            value: expenseById,
+            set: setExpenseById
+        },
         expenses: {
             value: expenses,
             set: setExpenses
@@ -166,9 +184,11 @@ function useGastos() {
         form,
         createGasto,
         getGastos,
+        getGastoById,
         onRefresh,
         getGastoByName,
     }
 }
 
 export { useGastos };
+
