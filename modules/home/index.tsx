@@ -5,12 +5,14 @@ import { Expense } from "../gastos/interfaces/expense.interface";
 import { useGetGastosUnpaidSummary } from "./services/getGastosUnpaidSummary.service";
 import { useGetTotalExpensesPerMonth } from "./services/getTotalExpensesPerMonth.service";
 import { ExpenseMonth } from "./interfaces/expenseMonth.interface";
+import { useGetExpensesProgress } from "./services/getExpensesProgress.service";
+import { ExpenseProgress } from "./interfaces/expenseProgress.interface";
 
 function useHome() {
-    const router = useRouter()
     const [loading, setLoading] = useState<boolean>(false)
     const [expensesSummaryList, setExpensesSummaryList] = useState<Expense[]>([])
     const [expensesPerMonthList, setExpensesPerMonthList] = useState<ExpenseMonth[]>([])
+    const [expensesProgress, setExpensesProgress] = useState<ExpenseProgress>({} as ExpenseProgress)
     const [isOpenConfirmModal, setIsOpenConfirmModal] = useState<boolean>(false)
 
     async function getGastosUnpaidSummary() {
@@ -37,6 +39,18 @@ function useHome() {
         }
     }
 
+    async function getExpensesProgress() {
+        setLoading(true)
+        try {
+            const response = await useGetExpensesProgress.execute()            
+            setExpensesProgress(response)
+            setLoading(false)            
+        } catch (error) {
+            setLoading(false)
+            Alert.alert('Erro!', `Erro ao buscar registros: ${error}`)
+        }
+    }
+
     useFocusEffect(
         useCallback(() => {
             getGastosUnpaidSummary()
@@ -49,6 +63,15 @@ function useHome() {
     useFocusEffect(
         useCallback(() => {
             getTotalExpensesPerMonth()
+            return () => {
+                setLoading(false);
+            };
+        }, [])
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            getExpensesProgress()
             return () => {
                 setLoading(false);
             };
@@ -68,8 +91,11 @@ function useHome() {
             value: expensesPerMonthList,
             set: setExpensesPerMonthList
         },
-        loading,
-        getGastosUnpaidSummary
+        expensesProgress: {
+            value: expensesProgress,
+            set: setExpensesProgress
+        },
+        loading
     }
 }
 

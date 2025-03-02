@@ -1,10 +1,12 @@
 import CardAcessoRapido from '@/components/cardAcessoRapido';
 import { ThemedText } from '@/components/themedText';
 import { useHome } from '@/modules/home';
+import { CardProgressoMensal } from '@/modules/home/components/cardProgressoMensal';
 import { CardResumoContas } from '@/modules/home/components/cardResumoContas';
 import { CardTotalGastos } from '@/modules/home/components/cardTotalGastos';
 import { useUserContext } from '@/shared/contexts/user-context';
 import { colors } from '@/styles/colors';
+import { MainShadowStyle } from '@/styles/mainShadow';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
 import { CopyPlus, DollarSign, UserRound } from 'lucide-react-native';
@@ -14,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function HomeScreen() {
   const router = useRouter()
   const { userState } = useUserContext()
-  const { expensesSummaryList, loading, expensesPerMonthList } = useHome()
+  const { expensesSummaryList, loading, expensesPerMonthList, expensesProgress } = useHome()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,6 +56,7 @@ export default function HomeScreen() {
       <View style={styles.mainContent}>
         <CardResumoContas data={expensesSummaryList.value} />
         <CardTotalGastos data={expensesPerMonthList.value} />
+        <CardProgressoMensal data={expensesProgress.value} />
       </View>
     </SafeAreaView>
   );

@@ -24,7 +24,7 @@ function CardTotalGastos({ data }: CardTotalGastosProps) {
 
     useEffect(() => {
         setCurrentMonth(dayjs(data[data.length - 1].month.toString(), "YYYY-MM"))
-    }, [data])
+    }, [data])  
 
     const minMonth = dayjs(Math.min(...data.map(d => dayjs(d.month.toString(), "YYYY-MM").valueOf())))
     const maxMonth = dayjs(Math.max(...data.map(d => dayjs(d.month.toString(), "YYYY-MM").valueOf())))

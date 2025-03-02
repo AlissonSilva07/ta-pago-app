@@ -9,6 +9,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker"
 import dayjs from "dayjs"
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { router } from "expo-router"
 import { Check, CheckCircle, ChevronsUpDown, TruckIcon } from "lucide-react-native"
 import { useState } from "react"
 import { Controller } from "react-hook-form"
@@ -179,7 +180,10 @@ export default function CreateScreen() {
             <ModalLayout
                 title="Sucesso!"
                 isVisible={isOpenConfirmPostModal.value}
-                onClose={() => isOpenConfirmPostModal.set(false)}
+                onClose={() => {
+                    isOpenConfirmPostModal.set(false)
+                    router.replace('/(auth)/pay')
+                }}
             >
                 <View style={styles.modalBody}>
                     <View style={{
@@ -196,7 +200,10 @@ export default function CreateScreen() {
                     }}>
                         <CustomButton
                             title='Fechar'
-                            onPress={() => isOpenConfirmPostModal.set(false)}
+                            onPress={() => {
+                                isOpenConfirmPostModal.set(false)
+                                router.replace('/(auth)/pay')
+                            }}
                             variant={'secondary'}
                             disabled={false}
                             icon={null}

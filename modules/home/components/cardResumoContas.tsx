@@ -16,7 +16,7 @@ interface CardResumoContasProps {
 }
 
 function CardResumoContas({ data }: CardResumoContasProps) {
-    if (!data) return
+    if (!data) return null
 
     return (
         <MainShadowStyle>
