@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function HomeScreen() {
   const router = useRouter()
   const { userState } = useUserContext()
-  const { expensesSummaryList, loading } = useHome()
+  const { expensesSummaryList, loading, expensesPerMonthList } = useHome()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,15 +53,7 @@ export default function HomeScreen() {
       </View>
       <View style={styles.mainContent}>
         <CardResumoContas data={expensesSummaryList.value} />
-        <CardTotalGastos data={{
-          id: "ede8a032-d4c8-4810-af76-b2ecd0dc8ada",
-          title: "Conta de Luz",
-          description: "Fatura mensal de eletricidade",
-          amount: String(120),
-          category: "Moradia",
-          isPaid: false,
-          dueDate: dayjs.utc("2025-02-28T00:00:00.000Z").toDate(),
-        }} />
+        <CardTotalGastos data={expensesPerMonthList.value} />
       </View>
     </SafeAreaView>
   );
@@ -78,7 +70,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     gap: 16,
-    paddingVertical: 16,
+    paddingTop: 16,
     paddingHorizontal: 16,
     backgroundColor: colors.primary
   },

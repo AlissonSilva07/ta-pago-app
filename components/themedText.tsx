@@ -20,7 +20,8 @@ export type ThemedTextProps = TextProps & {
     'titleSmall' |
     'titleSmallSecondary' |
     'titleSmallMedium' |
-    'titleSmallMediumDark',
+    'titleSmallMediumDark' |
+    'displayDark',
     children: TextProps
 };
 
@@ -50,6 +51,7 @@ export function ThemedText({
                 type === 'titleSmallSecondary' ? styles.titleSmallSecondary : undefined,
                 type === 'titleSmallMedium' ? styles.titleSmallMedium : undefined,
                 type === 'titleSmallMediumDark' ? styles.titleSmallMediumDark : undefined,
+                type === 'displayDark' ? styles.displayDark : undefined,
                 style,
             ]}
             {...rest}>
@@ -159,6 +161,12 @@ const styles = StyleSheet.create({
         fontSize: RFValue(18),
         fontFamily: fonts.semibold,
         lineHeight: 30,
+        color: colors.primary
+    },
+    displayDark: {
+        fontSize: RFValue(28),
+        fontFamily: fonts.semibold,
+        lineHeight: 38,
         color: colors.primary
     },
 })

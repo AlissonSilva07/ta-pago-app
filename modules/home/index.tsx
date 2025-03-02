@@ -28,7 +28,7 @@ function useHome() {
     async function getTotalExpensesPerMonth() {
         setLoading(true)
         try {
-            const response = await useGetTotalExpensesPerMonth.execute()
+            const response = await useGetTotalExpensesPerMonth.execute()            
             setExpensesPerMonthList(response)
             setLoading(false)            
         } catch (error) {
@@ -39,8 +39,16 @@ function useHome() {
 
     useFocusEffect(
         useCallback(() => {
-            getTotalExpensesPerMonth()
             getGastosUnpaidSummary()
+            return () => {
+                setLoading(false);
+            };
+        }, [])
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            getTotalExpensesPerMonth()
             return () => {
                 setLoading(false);
             };
